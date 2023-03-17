@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Distance and Duration Calculator</title>
+  <style>
+    #map {
+      height: 400px;
+      width: 100%;
+    }
+    .container {
+      margin: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    input, button {
+      margin: 5px;
+      padding: 5px;
+      font-size: 1rem;
+      
+    }
+    label {
+      font-size: 1rem;
+      display: box;
+    }
+    p {
+      font-size: 1.2rem;
+    }
+  </style>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAI2_KCKYmycQrFQ_yUCygAr-NbQ_rnT7k&libraries=places"></script>
+  <script>
+    let map;
+    let autocompleteStart;
+    let autocompleteEnd;
+    let autocompleteWaypoints = [];
+    let directionsService;
+    let directionsRenderer;
+
+    function initMap() {
+      map = new google.maps.Map(document.getElementById("map"), {
+        center: { lat: -34.397, lng: 150.644 },
+        zoom: 8,
+      });
+
+      directionsService = new google.maps.DirectionsService();
+      directionsRenderer = new google.maps.DirectionsRenderer();
+      directionsRenderer.setMap(map);
+
+      autocompleteStart = new google.maps.places.Autocomplete(
+        document.getElementById("start")
+      );
+      autocompleteEnd = new google.maps.places.Autocomplete(
+        document.getElementById("end")
+      );
+    }
+
+    function addWaypoint() {
+      const input = document.createElement("input");
+      input.type = "text";
+      input.placeholder = "Enter waypoint";
+      input.className = "waypoint";
+      document.getElementById("waypoints").appendChild(input);
+      autocompleteWaypoints.push(new google.maps.places.Autocomplete(input));
+    }
+
+    function calculateRoute() {
+      const start = document.getElementById("start").value;
+      const end = document.getElementById("end").value;
+      const waypoints = Array.from(document.getElementsByClassName("waypoint")).map(
+        (input, index) => ({
+          location: input.value,
+          stopover: true,
+        })
+      );
+
+      directionsService.route(
+        {
+          origin: start,
+          destination: end,
+          waypoints: waypoints,
+          optimizeWaypoints: true,
+          travelMode: google.maps.TravelMode.DRIVING,
+        },
+        (result, status) => {
+          if (status === "OK") {
+            directionsRenderer.setDirections(result);
+
+            const totalDistance = result.routes[0].legs.reduce(
+              (acc, curr) => acc + curr.distance.value,
+              0
+            );
+            const totalDuration = result.routes[0].legs.reduce(
+              (acc, curr) => acc + curr.duration.value,
+              0
+            );
+
+            const distanceInMiles = (totalDistance * 0.000621371).toFixed(2);
+            const hours = Math.floor(totalDuration / 3600);
+            const minutes = Math.floor((totalDuration % 3600) / 60);
+
+            const mpg = parseFloat(document.getElementById("mpg").value) || 0;
+            const fuelPrice = parseFloat(document.getElementById("fuel-price").value) || 0;
+            const driverPayPerMile = parseFloat(document.getElementById("driver-pay-per-mile").value) || 0;
+            const dispatchFeePercent = parseFloat(document.getElementById("dispatch-fee-percent").value) || 0;
+
+            const gallonsUsed = distanceInMiles / mpg;
+            const fuelCost = (gallonsUsed * fuelPrice).toFixed(2);
+            const driverPay = (distanceInMiles * driverPayPerMile).toFixed(2);
+            const totalCost = (parseFloat(fuelCost) + parseFloat(driverPay)).toFixed(2);
+            const dispatchFee = ((parseFloat(fuelCost) + parseFloat(driverPay)) * (dispatchFeePercent / 100)).toFixed(2);
+            const totalCostWithDispatch = (parseFloat(totalCost) + parseFloat(dispatchFee)).toFixed(2);
+
+            document.getElementById("distance").textContent = distanceInMiles + " miles";
+            document.getElementById("duration").textContent = hours + "h " + minutes + "m";
+            document.getElementById("fuel-cost").textContent = "$" + fuelCost;
+            document.getElementById("driver-pay").textContent = "$" + driverPay;
+            document.getElementById("dispatch-fee").textContent = "$" + dispatchFee;
+            document.getElementById("total-cost").textContent = "$" + totalCostWithDispatch;
+          } else {
+            window.alert("Directions request failed due to " + status);
+          }
+        }
+      );
+    }
+  </script>
+</head>
+<body onload="initMap()">
+  <div class="container">
+    <label for="start">Starting Point:</label>
+    <input id="start" placeholder="Enter starting point" type="text" />
+    <label for="end">Destination:</label>
+    <input id="end" placeholder="Enter destination" type="text" />
+    <div id="waypoints"></div>
+    <button onclick="addWaypoint()">Add waypoint</button>
+    <label for="mpg">MPG:</label>
+    <input id="mpg" placeholder="Enter MPG" type="number" step="0.01" min="0" />
+    <label for="fuel-price">Fuel Price per Gallon:</label>
+    <input id="fuel-price" placeholder="Enter fuel price per gallon" type="number" step="0.01" min="0" />
+    <label for="driver-pay-per-mile">Driver Pay per Mile:</label>
+    <input id="driver-pay-per-mile" placeholder="Enter driver pay per mile" type="number" step="0.01" min="0" />
+    <label for="dispatch-fee-percent">Dispatch Fee %:</label>
+    <input id="dispatch-fee-percent" placeholder="Enter dispatch fee %" type="number" step="0.01" min="0" />
+    <button onclick="calculateRoute()">Calculate Route</button>
+    <p>
+      Distance: <span id="distance">-</span><br />
+      Duration: <span id="duration">-</span><br />
+      Fuel Cost: <span id="fuel-cost">-</span><br />
+      Driver Pay: <span id="driver-pay">-</span><br />
+      Dispatch Fee: <span id="dispatch-fee">-</span><br />
+      Total Cost: <span id="total-cost">-</span>
+    </p>
+  </div>
+  <div id="map"></div>
+</body>
+</html>
+
+           
