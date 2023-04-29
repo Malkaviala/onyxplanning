@@ -1,157 +1,251 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Distance and Duration Calculator</title>
-  <style>
+    <h1>TRIP COST CALCULATOR</h1>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <title>Trip Planner</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500&display=swap');
+
+body {
+    font-family: 'Schibsted Grotesk', sans-serif;
+        background-color: #081b29;
+  }
+
+  #form-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  form {
+    color: black;
+    display: inline-block;
+    max-width: 95%;
+    padding: 20px;
+    vertical-align: top;
+  }
+
+
+ 
     #map {
-      height: 400px;
-      width: 100%;
+        size: auto;
+        height: 450px;
+        width: 100%;
+        margin-top: 30px;
+        border-radius: 20px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        
     }
-    .container {
-      margin: 10px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    input, button {
-      margin: 5px;
-      padding: 5px;
-      font-size: 1rem;
-      
-    }
+
     label {
-      font-size: 1rem;
-      display: box;
-    }
-    p {
-      font-size: 1.2rem;
-    }
-  </style>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAI2_KCKYmycQrFQ_yUCygAr-NbQ_rnT7k&libraries=places"></script>
-  <script>
-    let map;
-    let autocompleteStart;
-    let autocompleteEnd;
-    let autocompleteWaypoints = [];
-    let directionsService;
-    let directionsRenderer;
-
-    function initMap() {
-      map = new google.maps.Map(document.getElementById("map"), {
-        center: { lat: -34.397, lng: 150.644 },
-        zoom: 8,
-      });
-
-      directionsService = new google.maps.DirectionsService();
-      directionsRenderer = new google.maps.DirectionsRenderer();
-      directionsRenderer.setMap(map);
-
-      autocompleteStart = new google.maps.places.Autocomplete(
-        document.getElementById("start")
-      );
-      autocompleteEnd = new google.maps.places.Autocomplete(
-        document.getElementById("end")
-      );
+        font-weight: bold;
+        margin-top: 10px;
+        display: block;
+        color: white;
     }
 
-    function addWaypoint() {
-      const input = document.createElement("input");
-      input.type = "text";
-      input.placeholder = "Enter waypoint";
-      input.className = "waypoint";
-      document.getElementById("waypoints").appendChild(input);
-      autocompleteWaypoints.push(new google.maps.places.Autocomplete(input));
+    input[type="number"],input[type="text"] {
+        padding: 10px;
+        font-size: 16px;
+        width: 450px;
+        border: 1px solid #ccc;
+        border-radius: 30px;
+        margin-top: 15px;
+        box-sizing: border-box;
     }
 
-    function calculateRoute() {
-      const start = document.getElementById("start").value;
-      const end = document.getElementById("end").value;
-      const waypoints = Array.from(document.getElementsByClassName("waypoint")).map(
-        (input, index) => ({
-          location: input.value,
-          stopover: true,
-        })
-      );
-
-      directionsService.route(
-        {
-          origin: start,
-          destination: end,
-          waypoints: waypoints,
-          optimizeWaypoints: true,
-          travelMode: google.maps.TravelMode.DRIVING,
-        },
-        (result, status) => {
-          if (status === "OK") {
-            directionsRenderer.setDirections(result);
-
-            const totalDistance = result.routes[0].legs.reduce(
-              (acc, curr) => acc + curr.distance.value,
-              0
-            );
-            const totalDuration = result.routes[0].legs.reduce(
-              (acc, curr) => acc + curr.duration.value,
-              0
-            );
-
-            const distanceInMiles = (totalDistance * 0.000621371).toFixed(2);
-            const hours = Math.floor(totalDuration / 3600);
-            const minutes = Math.floor((totalDuration % 3600) / 60);
-
-            const mpg = parseFloat(document.getElementById("mpg").value) || 0;
-            const fuelPrice = parseFloat(document.getElementById("fuel-price").value) || 0;
-            const driverPayPerMile = parseFloat(document.getElementById("driver-pay-per-mile").value) || 0;
-            const dispatchFeePercent = parseFloat(document.getElementById("dispatch-fee-percent").value) || 0;
-
-            const gallonsUsed = distanceInMiles / mpg;
-            const fuelCost = (gallonsUsed * fuelPrice).toFixed(2);
-            const driverPay = (distanceInMiles * driverPayPerMile).toFixed(2);
-            const totalCost = (parseFloat(fuelCost) + parseFloat(driverPay)).toFixed(2);
-            const dispatchFee = ((parseFloat(fuelCost) + parseFloat(driverPay)) * (dispatchFeePercent / 100)).toFixed(2);
-            const totalCostWithDispatch = (parseFloat(totalCost) + parseFloat(dispatchFee)).toFixed(2);
-
-            document.getElementById("distance").textContent = distanceInMiles + " miles";
-            document.getElementById("duration").textContent = hours + "h " + minutes + "m";
-            document.getElementById("fuel-cost").textContent = "$" + fuelCost;
-            document.getElementById("driver-pay").textContent = "$" + driverPay;
-            document.getElementById("dispatch-fee").textContent = "$" + dispatchFee;
-            document.getElementById("total-cost").textContent = "$" + totalCostWithDispatch;
-          } else {
-            window.alert("Directions request failed due to " + status);
-          }
-        }
-      );
+    input[type="submit"],button {
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #2a2b03;
+        color: #f4f5f1;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 20px;
     }
-  </script>
+
+    input[type="submit"], button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: blue;;
+    color: #f4f5f1;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+    position: a;
+    size: 15px;
+    }
+
+    input[type="submit"]:hover, button:hover {
+        background-color: #3e8341;
+    }
+
+    h1 {
+        background-color: blue;
+        width: 100%;
+        font-size: 20px;
+        font-weight: bold;
+        margin-top: 0;
+        color: white !important;
+        text-align: center;
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    h2 {
+        text-align: center;
+        font-size: 25px;
+        position: relative;
+        margin-top: 30px;
+    }
+
+    #cost  {
+        margin-top: 30px;
+        background-color: #f4f5f1;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    #cost p {
+    margin-top: 10px;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+  }
+
+    #cost span {
+        size: auto;
+        margin-left: auto;
+        font-weight: bold;   
+    }
+
+    </style>
 </head>
-<body onload="initMap()">
-  <div class="container">
-    <label for="start">Starting Point:</label>
-    <input id="start" placeholder="Enter starting point" type="text" />
-    <label for="end">Destination:</label>
-    <input id="end" placeholder="Enter destination" type="text" />
-    <div id="waypoints"></div>
-    <button onclick="addWaypoint()">Add waypoint</button>
-    <label for="mpg">MPG:</label>
-    <input id="mpg" placeholder="Enter MPG" type="number" step="0.01" min="0" />
-    <label for="fuel-price">Fuel Price per Gallon:</label>
-    <input id="fuel-price" placeholder="Enter fuel price per gallon" type="number" step="0.01" min="0" />
-    <label for="driver-pay-per-mile">Driver Pay per Mile:</label>
-    <input id="driver-pay-per-mile" placeholder="Enter driver pay per mile" type="number" step="0.01" min="0" />
-    <label for="dispatch-fee-percent">Dispatch Fee %:</label>
-    <input id="dispatch-fee-percent" placeholder="Enter dispatch fee %" type="number" step="0.01" min="0" />
-    <button onclick="calculateRoute()">Calculate Route</button>
-    <p>
-      Distance: <span id="distance">-</span><br />
-      Duration: <span id="duration">-</span><br />
-      Fuel Cost: <span id="fuel-cost">-</span><br />
-      Driver Pay: <span id="driver-pay">-</span><br />
-      Dispatch Fee: <span id="dispatch-fee">-</span><br />
-      Total Cost: <span id="total-cost">-</span>
-    </p>
-  </div>
-  <div id="map"></div>
-</body>
-</html>
+<body>
+    <form>
 
-           
+        <label for="distance">Distance (miles):</label>
+<input type="number" id="distance" placeholder="Enter distance in miles" />
+
+<label for="mpg">Miles per gallon:</label>
+<input type="number" id="mpg" step= 0.01 placeholder="Enter mpg" />
+
+<label for="fuelPrice">Fuel price:</label>
+<input type="number" id="fuelPrice" step= 0.01 placeholder="Enter fuel price per gallon" />
+
+<label for="driverPay">Driver pay per mile:</label>
+<input type="number" id="driverPay" step= 0.01 placeholder="Enter driver pay per mile" />
+
+<label for="otherCostPerMile">Other cost per mile:</label>
+<input type="number" id="otherCostPerMile" step= 0.01 placeholder="Enter other cost per mile" />
+
+<label for="dispatchFeePercentage">Dispatch fee percentage:</label>
+<input type="number" id="dispatchFeePercentage" step= 0.01 placeholder="Enter dispatch fee percentage" />
+
+
+
+    <div id="cost">
+        <h2>Cost Break Down</h2>
+        <hr>
+        <p>Total fuel cost: <span id="totalFuelCost"></span></p>
+        <p>Driver pay: <span id="driverPayCost"></span></p>
+        <p>Other cost: <span id="otherCost"></span></p>
+        <p>Dispatch fee: <span id="dispatchFee"></span></p>
+        <p>Trip cost: <span id="tripCost"></span></p>
+        <hr>
+        <p>Cost per mile: <span id="costPerMile"></span></p>
+    </div>
+        
+
+     <button id="resetButton">Reset</button>
+
+    </form>
+    
+        
+    <script>
+        
+        const distanceInput = document.getElementById('distance');
+        const mpgInput = document.getElementById('mpg');
+        const fuelPriceInput = document.getElementById('fuelPrice');
+        const driverPayInput = document.getElementById('driverPay');
+        const otherCostPerMileInput = document.getElementById('otherCostPerMile');
+        const dispatchFeePercentageInput = document.getElementById('dispatchFeePercentage');
+        const totalFuelCostElement = document.getElementById('totalFuelCost');
+        const driverPayCostElement = document.getElementById('driverPayCost');
+        const otherCostElement = document.getElementById('otherCost');
+        const dispatchFeeElement = document.getElementById('dispatchFee');
+        const tripCostElement = document.getElementById('tripCost');
+        const costPerMileElement = document.getElementById('costPerMile');
+        const resetButton = document.getElementById('resetButton');
+
+        // load saved values from local storage
+       mpgInput.value = localStorage.getItem('mpg') || '';
+        fuelPriceInput.value = localStorage.getItem('fuelPrice') || '';
+        driverPayInput.value = localStorage.getItem('driverPay') || '';
+        otherCostPerMileInput.value = localStorage.getItem('otherCostPerMile') || '';
+        dispatchFeePercentageInput.value = localStorage.getItem('dispatchFeePercentage') || '';
+
+
+        function calculateCost() {
+            const distance = Number(distanceInput.value);
+            const mpg = Number(mpgInput.value);
+            const fuelPrice = Number(fuelPriceInput.value);
+            const driverPay = Number(driverPayInput.value);
+            const otherCostPerMile = Number(otherCostPerMileInput.value);
+            const dispatchFeePercentage = Number(dispatchFeePercentageInput.value);
+
+        if (isNaN(distance) || isNaN(mpg) || isNaN(fuelPrice)) {
+            tripCostElement.textContent = '';
+            costPerMileElement.textContent = '';
+            totalFuelCostElement.textContent = '';
+            driverPayCostElement.textContent = '';
+            otherCostElement.textContent = '';
+            dispatchFeeElement.textContent = '';
+            return;
+        }
+
+        const fuelCost = (distance / mpg) * fuelPrice;
+        const totalFuelCost = fuelCost;
+        const driverCost = isNaN(driverPay) ? 0 : distance * driverPay;
+        const otherCost = isNaN(otherCostPerMile) ? 0 : distance * otherCostPerMile;
+        const dispatchFee = isNaN(dispatchFeePercentage) ? 0 : (totalFuelCost + driverCost + otherCost) * (dispatchFeePercentage / 100);
+        const totalCost = totalFuelCost + driverCost + otherCost + dispatchFee;
+        const costPerMile = totalCost / distance;
+
+        // save values to local storage
+        localStorage.setItem('mpg', mpg);
+        localStorage.setItem('fuelPrice', fuelPrice);
+        localStorage.setItem('driverPay', driverPay);
+        localStorage.setItem('otherCostPerMile', otherCostPerMile);
+        localStorage.setItem('dispatchFeePercentage', dispatchFeePercentage);
+
+
+        totalFuelCostElement.textContent = `$${totalFuelCost.toFixed(2)}`;
+        driverPayCostElement.textContent = `$${driverCost.toFixed(2)}`;
+        otherCostElement.textContent = `$${otherCost.toFixed(2)}`;
+        dispatchFeeElement.textContent = `$${dispatchFee.toFixed(2)}`;
+        tripCostElement.textContent = `$${totalCost.toFixed(2)}`;
+        costPerMileElement.textContent = `$${costPerMile.toFixed(2)}`;
+        }
+
+        function reset() {
+        distanceInput.value = '';
+        }
+
+        distanceInput.addEventListener('input', calculateCost);
+        mpgInput.addEventListener('input', calculateCost);
+        fuelPriceInput.addEventListener('input', calculateCost);
+        driverPayInput.addEventListener('input', calculateCost);
+        otherCostPerMileInput.addEventListener('input', calculateCost);
+        dispatchFeePercentageInput.addEventListener('input', calculateCost);
+        resetButton.addEventListener('click', reset);
+</script>
+<html>
