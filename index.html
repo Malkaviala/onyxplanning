@@ -1,252 +1,1352 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <h1>TRIP COST CALCULATOR</h1>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta charset="utf-8">
-    <title>Trip Planner</title>
-    <style>
-      @import url('https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500&display=swap');
-
-body {
-    font-family: 'Schibsted Grotesk', sans-serif;
-        background-color: #081b29;
-  }
-
-  #form-container {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-  }
-
-  form {
-    color: black;
-    display: inline-block;
-    max-width: 95%;
-    padding: 20px;
-    vertical-align: top;
-  }
-
-
- 
+  <title>Truck Trip Planner</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --primary: #1e40af;
+      --primary-light: #3b82f6;
+      --primary-dark: #1e3a8a;
+      --secondary: #0f172a;
+      --light-bg: #f8fafc;
+      --card-bg: #ffffff;
+      --border-color: #e2e8f0;
+      --success: #10b981;
+      --danger: #ef4444;
+      --text-dark: #1e293b;
+      --text-light: #64748b;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+      --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+      --radius: 8px;
+      --spacing-xs: 4px;
+      --spacing-sm: 8px;
+      --spacing-md: 16px;
+      --spacing-lg: 24px;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: var(--light-bg);
+      color: var(--text-dark);
+      line-height: 1.6;
+    }
+    
+    header {
+      background: linear-gradient(to right, var(--primary-dark), var(--primary));
+      color: white;
+      padding: var(--spacing-md);
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      box-shadow: var(--shadow-md);
+    }
+    
+    header h1 {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: var(--spacing-md);
+    }
+    
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: var(--spacing-md);
+      overflow: hidden;
+    }
+    
+    .card-header {
+      padding: var(--spacing-md);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .card-header h2 {
+      font-size: 1.1rem;
+      font-weight: 500;
+      margin: 0;
+    }
+    
+    .card-body {
+      padding: var(--spacing-md);
+    }
+    
+    .form-group {
+      margin-bottom: var(--spacing-md);
+    }
+    
+    .form-label {
+      display: block;
+      margin-bottom: var(--spacing-xs);
+      font-weight: 500;
+      font-size: 0.9rem;
+      color: var(--text-dark);
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 12px var(--spacing-md);
+      font-size: 1rem;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      background-color: white;
+      transition: border-color 0.2s;
+      appearance: none;
+    }
+    
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary-light);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+    
+    .form-row {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-md);
+      margin-bottom: var(--spacing-md);
+    }
+    
+    @media (min-width: 768px) {
+      .form-row {
+        flex-direction: row;
+      }
+      
+      .form-row > * {
+        flex: 1;
+      }
+    }
+    
+    .waypoint-card {
+      background: white;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      margin-bottom: var(--spacing-md);
+      overflow: hidden;
+    }
+    
+    .waypoint-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--spacing-md);
+      background-color: var(--light-bg);
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .waypoint-title {
+      font-weight: 500;
+      margin: 0;
+      font-size: 0.95rem;
+    }
+    
+    .waypoint-body {
+      padding: var(--spacing-md);
+    }
+    
+    .time-row {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-md);
+      margin-top: var(--spacing-sm);
+    }
+    
+    @media (min-width: 768px) {
+      .time-row {
+        flex-direction: row;
+      }
+    }
+    
+    .time-group {
+      flex: 1;
+    }
+    
+    .dwell-inputs {
+      display: flex;
+      gap: var(--spacing-sm);
+      align-items: center;
+    }
+    
+    .dwell-inputs input {
+      width: 60px;
+      text-align: center;
+      padding: 10px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+    }
+    
+    .dwell-inputs span {
+      font-size: 0.85rem;
+    }
+    
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 16px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      text-align: center;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    
+    .btn-primary {
+      background-color: var(--primary);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+    }
+    
+    .btn-secondary {
+      background-color: var(--light-bg);
+      color: var(--text-dark);
+      border: 1px solid var(--border-color);
+    }
+    
+    .btn-secondary:hover {
+      background-color: #e2e8f0;
+    }
+    
+    .btn-danger {
+      background-color: var(--danger);
+      color: white;
+    }
+    
+    .btn-danger:hover {
+      background-color: #dc2626;
+    }
+    
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 0.85rem;
+    }
+    
+    .btn-block {
+      display: block;
+      width: 100%;
+    }
+    
+    .btn-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+      border-radius: 50%;
+      color: var(--text-light);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+    }
+    
+    .btn-icon:hover {
+      background-color: var(--light-bg);
+    }
+    
+    .buttons-container {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-sm);
+      margin-top: var(--spacing-md);
+    }
+    
+    @media (min-width: 768px) {
+      .buttons-container {
+        flex-direction: row;
+      }
+      
+      .buttons-container .btn {
+        flex: 1;
+      }
+    }
+    
+    .collapse-btn {
+      background: none;
+      border: none;
+      color: var(--primary);
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      padding: var(--spacing-xs) 0;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    .collapse-btn:hover {
+      text-decoration: underline;
+    }
+    
+    .map-container {
+      height: 50vh;
+      width: 100%;
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: var(--spacing-md);
+    }
+    
     #map {
-        size: auto;
-        height: 450px;
-        width: 100%;
-        margin-top: 30px;
-        border-radius: 20px;
-        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-        
+      height: 100%;
+      width: 100%;
     }
-
-    label {
-        font-weight: bold;
-        margin-top: 10px;
-        display: block;
-        color: white;
+    
+    #error-message {
+      color: var(--danger);
+      text-align: center;
+      margin: var(--spacing-sm) 0;
+      font-size: 0.9rem;
     }
-
-    input[type="number"],input[type="text"] {
-        padding: 10px;
-        font-size: 16px;
-        width: 450px;
-        border: 1px solid #ccc;
-        border-radius: 30px;
-        margin-top: 15px;
-        box-sizing: border-box;
+    
+    .trip-details {
+      padding: var(--spacing-md);
+      background-color: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
     }
-
-    input[type="submit"],button {
-        padding: 10px 20px;
-        font-size: 16px;
-        background-color: #2a2b03;
-        color: #f4f5f1;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        margin-top: 20px;
+    
+    .segment {
+      border-left: 3px solid var(--primary-light);
+      padding-left: var(--spacing-md);
+      margin-bottom: var(--spacing-md);
     }
-
-    input[type="submit"], button {
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: blue;;
-    color: #f4f5f1;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 20px;
-    position: a;
-    size: 15px;
+    
+    .segment h3 {
+      margin-bottom: var(--spacing-xs);
+      font-size: 1.1rem;
+      font-weight: 500;
     }
-
-    input[type="submit"]:hover, button:hover {
-        background-color: #3e8341;
+    
+    .eta-time {
+      font-weight: bold;
+      color: var(--primary);
+      font-size: 1.1rem;
     }
-
-    h1 {
-        background-color: blue;
-        width: 100%;
-        font-size: 20px;
-        font-weight: bold;
-        margin-top: 0;
-        color: white !important;
-        text-align: center;
-        margin-left: 0;
-        margin-right: 0;
+    
+    .summary-box {
+      background-color: var(--light-bg);
+      border-radius: var(--radius);
+      padding: var(--spacing-md);
+      margin-top: var(--spacing-md);
     }
-
-    h2 {
-        text-align: center;
-        font-size: 25px;
-        position: relative;
-        margin-top: 30px;
+    
+    .hidden {
+      display: none !important;
     }
-
-    #cost  {
-        margin-top: 30px;
-        background-color: #f4f5f1;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    
+    hr {
+      border: none;
+      height: 1px;
+      background-color: var(--border-color);
+      margin: var(--spacing-md) 0;
     }
-
-    #cost p {
-    margin-top: 10px;
-    font-size: 15px;
-    display: flex;
-    align-items: center;
-  }
-
-    #cost span {
-        size: auto;
-        margin-left: auto;
-        font-weight: bold;   
+    
+    /* Dialog styles */
+    .dialog-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--spacing-md);
     }
-
-    </style>
+    
+    .dialog {
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-md);
+      width: 100%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+    }
+    
+    .dialog-header {
+      padding: var(--spacing-md);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .dialog-title {
+      font-size: 1.2rem;
+      font-weight: 500;
+      margin: 0;
+    }
+    
+    .dialog-body {
+      padding: var(--spacing-md);
+    }
+    
+    .dialog-footer {
+      padding: var(--spacing-md);
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: flex-end;
+      gap: var(--spacing-sm);
+    }
+    
+    .url-display {
+      padding: var(--spacing-sm);
+      background: var(--light-bg);
+      border-radius: var(--radius);
+      margin-bottom: var(--spacing-md);
+      word-break: break-all;
+      font-size: 0.85rem;
+      font-family: monospace;
+      max-height: 100px;
+      overflow-y: auto;
+    }
+    
+    /* Loading indicator */
+    .loading {
+      display: inline-block;
+      width: 1.5rem;
+      height: 1.5rem;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s ease-in-out infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    /* POI marker colors */
+    .marker-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--spacing-sm);
+      margin-bottom: var(--spacing-md);
+    }
+    
+    .marker-type {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.85rem;
+      padding: 4px 8px;
+      background: var(--light-bg);
+      border-radius: 16px;
+    }
+    
+    .marker-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    
+    .dot-truck-stop { background-color: #e11d48; }
+    .dot-rest-area { background-color: #2563eb; }
+    .dot-gas-station { background-color: #16a34a; }
+    .dot-truck-parking { background-color: #ca8a04; }
+    
+    /* Fixed bottom bar for mobile */
+    .bottom-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      padding: var(--spacing-sm);
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+      z-index: 5;
+      display: flex;
+      justify-content: space-between;
+      gap: var(--spacing-sm);
+    }
+    
+    /* Add padding to bottom of page to account for fixed bar */
+    .page-bottom-padding {
+      height: 70px;
+    }
+    
+    /* Toast notification */
+    .toast {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.8);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 24px;
+      font-size: 0.9rem;
+      z-index: 1000;
+      animation: fadeIn 0.3s, fadeOut 0.3s 2.7s;
+      animation-fill-mode: forwards;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; bottom: 60px; }
+      to { opacity: 1; bottom: 80px; }
+    }
+    
+    @keyframes fadeOut {
+      from { opacity: 1; }
+      to { opacity: 0; }
+    }
+  </style>
 </head>
 <body>
-    <form>
-
-        <label for="distance">Distance (miles):</label>
-<input type="number" id="distance" placeholder="Enter distance in miles" required />
-
-<label for="mpg">Miles per gallon:</label>
-<input type="number" id="mpg" step= 0.01 placeholder="Enter mpg" required />
-
-<label for="fuelPrice">Fuel price:</label>
-<input type="number" id="fuelPrice" step= 0.01 placeholder="Enter fuel price per gallon" required />
-
-<label for="driverPay">Driver pay per mile:</label>
-<input type="number" id="driverPay" step= 0.01 placeholder="Enter driver pay per mile" />
-
-<label for="otherCostPerMile">Other cost per mile:</label>
-<input type="number" id="otherCostPerMile" step= 0.01 placeholder="Enter other cost per mile" />
-
-<label for="dispatchFeePercentage">Dispatch fee percentage:</label>
-<input type="number" id="dispatchFeePercentage" step= 0.01 placeholder="Enter dispatch fee percentage" />
-
-
-
-    <div id="cost">
-        <h2>Cost Break Down</h2>
-        <hr>
-        <p>Total fuel cost: <span id="totalFuelCost"></span></p>
-        <p>Driver pay: <span id="driverPayCost"></span></p>
-        <p>Other cost: <span id="otherCost"></span></p>
-        <p>Dispatch fee: <span id="dispatchFee"></span></p>
-        <hr>
-        <p>Trip cost: <span id="tripCost"></span></p>
-        <hr>
-        <p>Cost per mile: <span id="costPerMile"></span></p>
+  <header>
+    <h1>Truck Trip Planner</h1>
+  </header>
+  
+  <div class="container">
+    <div class="card">
+      <div class="card-header">
+        <h2>Route Details</h2>
+      </div>
+      <div class="card-body">
+        <form id="route-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="origin">Start Location</label>
+              <input id="origin" class="form-control" placeholder="Enter start location">
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label" for="destination">Destination</label>
+              <input id="destination" class="form-control" placeholder="Enter destination">
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="trip-start-time">Trip Start Time</label>
+            <input type="datetime-local" id="trip-start-time" class="form-control">
+          </div>
+        </form>
+      </div>
     </div>
-        
-
-     <button id="resetButton">Reset</button>
-
-    </form>
     
+    <div class="card">
+      <div class="card-header">
+        <h2>Waypoints</h2>
+        <button id="add-waypoint-btn" class="btn btn-sm btn-secondary">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          Add
+        </button>
+      </div>
+      <div class="card-body">
+        <div id="waypoints"></div>
+      </div>
+    </div>
+    
+    <div id="error-message"></div>
+    
+    <div class="map-container">
+      <div id="map"></div>
+    </div>
+    
+    <div class="marker-legend">
+      <div class="marker-type">
+        <span class="marker-dot dot-truck-stop"></span>
+        Truck Stops
+      </div>
+      <div class="marker-type">
+        <span class="marker-dot dot-rest-area"></span>
+        Rest Areas
+      </div>
+      <div class="marker-type">
+        <span class="marker-dot dot-gas-station"></span>
+        Gas Stations
+      </div>
+      <div class="marker-type">
+        <span class="marker-dot dot-truck-parking"></span>
+        Truck Parking
+      </div>
+    </div>
+    
+    <div id="trip-details" class="trip-details hidden"></div>
+    
+    <div class="page-bottom-padding"></div>
+  </div>
+  
+  <div class="bottom-bar">
+    <button id="calculate-btn" class="btn btn-primary">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+      Plan Route
+    </button>
+    <button id="share-button" class="btn btn-secondary">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+      Share
+    </button>
+  </div>
+
+  <script>
+    let map, directionsService, directionsRenderer;
+    let waypointData = []; // Store all waypoint info (location input, dwell time, departure time)
+    let truckStopMarkers = [];
+    let routeData = [];
+
+    const customIcons = {
+      "truck stop": {
+        url: "https://maps.google.com/mapfiles/kml/shapes/truck.png",
+        color: "#e11d48" // rose-600
+      },
+      "rest area": {
+        url: "https://maps.google.com/mapfiles/kml/shapes/info-i_maps.png",
+        color: "#2563eb" // blue-600
+      },
+      "gas station": {
+        url: "https://maps.google.com/mapfiles/kml/shapes/gas_stations.png",
+        color: "#16a34a" // green-600
+      },
+      "truck parking": {
+        url: "https://maps.google.com/mapfiles/kml/shapes/parking_lot_maps.png",
+        color: "#ca8a04" // yellow-600
+      }
+    };
+
+    function initMap() {
+      map = new google.maps.Map(document.getElementById("map"), {
+        center: { lat: 39.5, lng: -98.35 },
+        zoom: 5,
+        mapTypeControl: false,
+        fullscreenControl: false,
+        streetViewControl: false,
+        zoomControlOptions: {
+          position: google.maps.ControlPosition.RIGHT_BOTTOM
+        }
+      });
+
+      directionsService = new google.maps.DirectionsService();
+      directionsRenderer = new google.maps.DirectionsRenderer({
+        map,
+        suppressMarkers: false,
+        polylineOptions: {
+          strokeColor: "#3b82f6",
+          strokeWeight: 5,
+          strokeOpacity: 0.7
+        }
+      });
+
+      new google.maps.places.Autocomplete(document.getElementById("origin"));
+      new google.maps.places.Autocomplete(document.getElementById("destination"));
+
+      // Set trip start time default to current time
+      const now = new Date();
+      now.setMinutes(now.getMinutes() - now.getMinutes() % 5); // Round to nearest 5 minutes
+      document.getElementById("trip-start-time").value = now.toISOString().slice(0, 16);
+
+      // Add first waypoint
+      addWaypoint();
+      
+      // Setup event listeners
+      document.getElementById("add-waypoint-btn").addEventListener("click", () => addWaypoint());
+      document.getElementById("calculate-btn").addEventListener("click", calculateRoute);
+      document.getElementById("share-button").addEventListener("click", shareToGoogleMaps);
+    }
+
+    function createWaypointObject() {
+      return {
+        locationInput: null,
+        dwellHoursInput: null,
+        dwellMinutesInput: null,
+        departureTimeInput: null
+      };
+    }
+
+    function addWaypoint(location = "") {
+      const container = document.getElementById("waypoints");
+      const waypointIndex = waypointData.length;
+      
+      // Create waypoint card
+      const waypointCard = document.createElement("div");
+      waypointCard.className = "waypoint-card";
+      waypointCard.id = `waypoint-${waypointIndex}`;
+      
+      // Waypoint header
+      const header = document.createElement("div");
+      header.className = "waypoint-header";
+      
+      const title = document.createElement("h3");
+      title.className = "waypoint-title";
+      title.textContent = `Waypoint ${waypointIndex + 1}`;
+      
+      const removeBtn = document.createElement("button");
+      removeBtn.className = "btn-icon";
+      removeBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
+      removeBtn.onclick = (e) => {
+        e.preventDefault();
+        waypointCard.remove();
+        waypointData[waypointIndex] = null; // Mark as removed but preserve array indices
+      };
+      
+      header.appendChild(title);
+      header.appendChild(removeBtn);
+      waypointCard.appendChild(header);
+      
+      // Waypoint body
+      const body = document.createElement("div");
+      body.className = "waypoint-body";
+      
+      // Location input
+      const locationGroup = document.createElement("div");
+      locationGroup.className = "form-group";
+      
+      const locationLabel = document.createElement("label");
+      locationLabel.className = "form-label";
+      locationLabel.textContent = "Location";
+      
+      const locationInput = document.createElement("input");
+      locationInput.className = "form-control";
+      locationInput.setAttribute("placeholder", "Enter waypoint location");
+      locationInput.value = location;
+      
+      // Initialize Google Places Autocomplete
+      new google.maps.places.Autocomplete(locationInput);
+      
+      locationGroup.appendChild(locationLabel);
+      locationGroup.appendChild(locationInput);
+      body.appendChild(locationGroup);
+      
+      // Time settings
+      const timeRow = document.createElement("div");
+      timeRow.className = "time-row";
+      
+      // Dwell time group
+      const dwellGroup = document.createElement("div");
+      dwellGroup.className = "time-group";
+      
+      const dwellLabel = document.createElement("label");
+      dwellLabel.className = "form-label";
+      dwellLabel.textContent = "Dwell Time";
+      
+      const dwellInputs = document.createElement("div");
+      dwellInputs.className = "dwell-inputs";
+      
+      const hoursInput = document.createElement("input");
+      hoursInput.setAttribute("type", "number");
+      hoursInput.setAttribute("min", "0");
+      hoursInput.setAttribute("max", "99");
+      hoursInput.setAttribute("placeholder", "0");
+      hoursInput.value = "0";
+      
+      const minutesInput = document.createElement("input");
+      minutesInput.setAttribute("type", "number");
+      minutesInput.setAttribute("min", "0");
+      minutesInput.setAttribute("max", "59");
+      minutesInput.setAttribute("placeholder", "0");
+      minutesInput.value = "0";
+      
+      dwellInputs.appendChild(hoursInput);
+      dwellInputs.appendChild(document.createTextNode(" hrs "));
+      dwellInputs.appendChild(minutesInput);
+      dwellInputs.appendChild(document.createTextNode(" mins"));
+      
+      dwellGroup.appendChild(dwellLabel);
+      dwellGroup.appendChild(dwellInputs);
+      
+      // Departure time group
+      const departureGroup = document.createElement("div");
+      departureGroup.className = "time-group";
+      
+      const departureLabel = document.createElement("label");
+      departureLabel.className = "form-label";
+      departureLabel.textContent = "Departure Time";
+      
+      const departureInput = document.createElement("input");
+      departureInput.setAttribute("type", "datetime-local");
+      departureInput.className = "form-control";
+      
+      departureGroup.appendChild(departureLabel);
+      departureGroup.appendChild(departureInput);
+      
+      // Add time groups to time row
+      timeRow.appendChild(dwellGroup);
+      timeRow.appendChild(departureGroup);
+      
+      // Initially hidden, with toggle
+      const timeSettings = document.createElement("div");
+      timeSettings.className = "time-settings hidden";
+      timeSettings.appendChild(timeRow);
+      
+      const toggleBtn = document.createElement("button");
+      toggleBtn.textContent = "Show time settings";
+      toggleBtn.className = "collapse-btn";
+      toggleBtn.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        Time settings
+      `;
+      toggleBtn.onclick = (e) => {
+        e.preventDefault();
+        timeSettings.classList.toggle("hidden");
+        toggleBtn.innerHTML = timeSettings.classList.contains("hidden") 
+          ? `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg> Time settings`
+          : `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg> Hide time settings`;
+      };
+      
+      body.appendChild(toggleBtn);
+      body.appendChild(timeSettings);
+      waypointCard.appendChild(body);
+      
+      // Add to container
+      container.appendChild(waypointCard);
+      
+      // Store references to inputs
+      const waypointObj = createWaypointObject();
+      waypointObj.locationInput = locationInput;
+      waypointObj.dwellHoursInput = hoursInput;
+      waypointObj.dwellMinutesInput = minutesInput;
+      waypointObj.departureTimeInput = departureInput;
+      
+      waypointData.push(waypointObj);
+      
+      return waypointObj;
+    }
+
+    function clearTruckStopMarkers() {
+      truckStopMarkers.forEach(marker => marker.setMap(null));
+      truckStopMarkers = [];
+    }
+
+    function setErrorMessage(message) {
+      const errorElement = document.getElementById("error-message");
+      errorElement.textContent = message;
+      
+      if (message) {
+        errorElement.classList.remove("hidden");
+        // Auto-hide after 5 seconds
+        setTimeout(() => {
+          errorElement.classList.add("hidden");
+        }, 5000);
+      } else {
+        errorElement.classList.add("hidden");
+      }
+    }
+    
+    function showToast(message) {
+      // Remove any existing toast
+      const existingToast = document.querySelector(".toast");
+      if (existingToast) {
+        existingToast.remove();
+      }
+      
+      const toast = document.createElement("div");
+      toast.className = "toast";
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      
+      // Auto-remove after animation completes
+      setTimeout(() => {
+        toast.remove();
+      }, 3000);
+    }
+
+    function formatTime(date) {
+      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function formatDate(date) {
+      return date.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
+    }
+
+    function formatDateTime(date) {
+      return `${formatDate(date)} at ${formatTime(date)}`;
+    }
+
+    function displayTripDetails() {
+      const tripDetailsDiv = document.getElementById("trip-details");
+      tripDetailsDiv.innerHTML = "";
+      tripDetailsDiv.classList.remove("hidden");
+
+      let totalDistance = 0;
+      let totalDrivingDuration = 0;
+      let totalDwellDuration = 0;
+      
+      // Use either user-specified start time or current time
+      const tripStartInput = document.getElementById("trip-start-time").value;
+      let currentTime = tripStartInput ? new Date(tripStartInput) : new Date();
+      
+      const startTime = formatDateTime(currentTime);
+      
+      // Create header section
+      const header = document.createElement("h3");
+      header.textContent = "Trip Summary";
+      tripDetailsDiv.appendChild(header);
+      
+      const startTimeEl = document.createElement("p");
+      startTimeEl.innerHTML = `<strong>Departure:</strong> ${startTime}`;
+      tripDetailsDiv.appendChild(startTimeEl);
+      
+      tripDetailsDiv.appendChild(document.createElement("hr"));
+
+      routeData.forEach((segment, index) => {
+        const { 
+          distance, 
+          duration, 
+          startName, 
+          endName, 
+          dwellHours, 
+          dwellMinutes, 
+          departureTime 
+        } = segment;
         
-    <script>
+        totalDistance += distance.value;
+        totalDrivingDuration += duration.value;
         
-        const distanceInput = document.getElementById('distance');
-        const mpgInput = document.getElementById('mpg');
-        const fuelPriceInput = document.getElementById('fuelPrice');
-        const driverPayInput = document.getElementById('driverPay');
-        const otherCostPerMileInput = document.getElementById('otherCostPerMile');
-        const dispatchFeePercentageInput = document.getElementById('dispatchFeePercentage');
-        const totalFuelCostElement = document.getElementById('totalFuelCost');
-        const driverPayCostElement = document.getElementById('driverPayCost');
-        const otherCostElement = document.getElementById('otherCost');
-        const dispatchFeeElement = document.getElementById('dispatchFee');
-        const tripCostElement = document.getElementById('tripCost');
-        const costPerMileElement = document.getElementById('costPerMile');
-        const resetButton = document.getElementById('resetButton');
-
-        // load saved values from local storage
-       mpgInput.value = localStorage.getItem('mpg') || '';
-        fuelPriceInput.value = localStorage.getItem('fuelPrice') || '';
-        driverPayInput.value = localStorage.getItem('driverPay') || '';
-        otherCostPerMileInput.value = localStorage.getItem('otherCostPerMile') || '';
-        dispatchFeePercentageInput.value = localStorage.getItem('dispatchFeePercentage') || '';
-
-
-        function calculateCost() {
-            const distance = Number(distanceInput.value);
-            const mpg = Number(mpgInput.value);
-            const fuelPrice = Number(fuelPriceInput.value);
-            const driverPay = Number(driverPayInput.value);
-            const otherCostPerMile = Number(otherCostPerMileInput.value);
-            const dispatchFeePercentage = Number(dispatchFeePercentageInput.value);
-
-        if (isNaN(distance) || isNaN(mpg) || isNaN(fuelPrice)) {
-            tripCostElement.textContent = '';
-            costPerMileElement.textContent = '';
-            totalFuelCostElement.textContent = '';
-            driverPayCostElement.textContent = '';
-            otherCostElement.textContent = '';
-            dispatchFeeElement.textContent = '';
-            return;
+        // Calculate arrival time for this segment
+        const segmentDriveTime = new Date(currentTime.getTime() + duration.value * 1000);
+        const arrivalTime = formatDateTime(segmentDriveTime);
+        
+        // Create segment section
+        const segmentDiv = document.createElement("div");
+        segmentDiv.className = "segment";
+        
+        const segmentTitle = document.createElement("h3");
+        segmentTitle.textContent = `Segment ${index + 1}`;
+        segmentDiv.appendChild(segmentTitle);
+        
+        const routeInfo = document.createElement("p");
+        routeInfo.innerHTML = `<strong>${startName}</strong> → <strong>${endName}</strong>`;
+        segmentDiv.appendChild(routeInfo);
+        
+        const distanceDuration = document.createElement("p");
+        distanceDuration.textContent = `${distance.text} • ${duration.text}`;
+        segmentDiv.appendChild(distanceDuration);
+        
+        const eta = document.createElement("p");
+        eta.className = "eta-time";
+        eta.textContent = `Arrival: ${arrivalTime}`;
+        segmentDiv.appendChild(eta);
+                
+        // Calculate next time point
+        currentTime = segmentDriveTime; // Set to arrival time
+        
+        // Handle dwell time if specified
+        if (dwellHours > 0 || dwellMinutes > 0) {
+          const dwellTimeMs = ((dwellHours * 60) + parseInt(dwellMinutes)) * 60 * 1000;
+          const dwellEndTime = new Date(currentTime.getTime() + dwellTimeMs);
+          
+          const dwellInfo = document.createElement("p");
+          dwellInfo.textContent = `Stop duration: ${dwellHours}h ${dwellMinutes}m`;
+          segmentDiv.appendChild(dwellInfo);
+          
+          const dwellEnd = document.createElement("p");
+          dwellEnd.textContent = `Ready to depart: ${formatDateTime(dwellEndTime)}`;
+          segmentDiv.appendChild(dwellEnd);
+          
+          // Add dwell time to total
+          totalDwellDuration += dwellTimeMs / 1000; // Convert ms to seconds
+          
+          // Update current time to after dwell
+          currentTime = dwellEndTime;
         }
-
-        const fuelCost = (distance / mpg) * fuelPrice;
-        const totalFuelCost = fuelCost;
-        const driverCost = isNaN(driverPay) ? 0 : distance * driverPay;
-        const otherCost = isNaN(otherCostPerMile) ? 0 : distance * otherCostPerMile;
-        const dispatchFee = isNaN(dispatchFeePercentage) ? 0 : (totalFuelCost + driverCost + otherCost) * (dispatchFeePercentage / 100);
-        const totalCost = totalFuelCost + driverCost + otherCost + dispatchFee;
-        const costPerMile = totalCost / distance;
-
-        // save values to local storage
-        localStorage.setItem('mpg', mpg);
-        localStorage.setItem('fuelPrice', fuelPrice);
-        localStorage.setItem('driverPay', driverPay);
-        localStorage.setItem('otherCostPerMile', otherCostPerMile);
-        localStorage.setItem('dispatchFeePercentage', dispatchFeePercentage);
-
-
-        totalFuelCostElement.textContent = `$${totalFuelCost.toFixed(2)}`;
-        driverPayCostElement.textContent = `$${driverCost.toFixed(2)}`;
-        otherCostElement.textContent = `$${otherCost.toFixed(2)}`;
-        dispatchFeeElement.textContent = `$${dispatchFee.toFixed(2)}`;
-        tripCostElement.textContent = `$${totalCost.toFixed(2)}`;
-        costPerMileElement.textContent = `$${costPerMile.toFixed(2)}`;
+        
+        // Override with departure time if specified
+        if (departureTime) {
+          const departDate = new Date(departureTime);
+          
+          // Only use departure time if it's after arrival + dwell
+          if (departDate > currentTime) {
+            // Calculate waiting time (additional dwell)
+            const additionalWaitMs = departDate - currentTime;
+            const additionalWaitHours = additionalWaitMs / (1000 * 60 * 60);
+            
+            if (additionalWaitHours > 0) {
+              const additionalWait = document.createElement("p");
+              additionalWait.textContent = `Additional wait: ${additionalWaitHours.toFixed(1)}h`;
+              segmentDiv.appendChild(additionalWait);
+              
+              // Add to total dwell time
+              totalDwellDuration += additionalWaitMs / 1000;
+            }
+            
+            currentTime = departDate;
+            const scheduledDeparture = document.createElement("p");
+            scheduledDeparture.className = "eta-time";
+            scheduledDeparture.textContent = `Scheduled departure: ${formatDateTime(departDate)}`;
+            segmentDiv.appendChild(scheduledDeparture);
+          }
         }
+        
+        tripDetailsDiv.appendChild(segmentDiv);
+      });
 
-        function reset() {
-        distanceInput.value = '';
+      const totalMiles = (totalDistance / 1000) * 0.621371;
+      const totalDrivingHours = totalDrivingDuration / 3600;
+      const totalDwellHours = totalDwellDuration / 3600;
+      const totalTripHours = totalDrivingHours + totalDwellHours;
+
+      const finalEta = formatDateTime(currentTime);
+
+      // Create summary box
+      const summaryBox = document.createElement("div");
+      summaryBox.className = "summary-box";
+      
+      summaryBox.innerHTML = `
+        <h3>Total Trip</h3>
+        <p><strong>Distance:</strong> ${totalMiles.toFixed(1)} miles</p>
+        <p><strong>Driving time:</strong> ${totalDrivingHours.toFixed(1)} hours</p>
+        <p><strong>Stop/wait time:</strong> ${totalDwellHours.toFixed(1)} hours</p>
+        <p><strong>Total trip duration:</strong> ${totalTripHours.toFixed(1)} hours</p>
+        <p class="eta-time">Final arrival: ${finalEta}</p>
+      `;
+      
+      tripDetailsDiv.appendChild(summaryBox);
+      
+      // Scroll to trip details
+      tripDetailsDiv.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function calculateRoute() {
+      // Show loading state
+      document.getElementById("calculate-btn").innerHTML = '<span class="loading"></span> Planning...';
+      
+      clearTruckStopMarkers();
+      setErrorMessage("");
+      routeData = [];
+
+      const origin = document.getElementById("origin").value.trim();
+      const destination = document.getElementById("destination").value.trim();
+
+      if (!origin || !destination) {
+        setErrorMessage("Please enter both origin and destination");
+        document.getElementById("calculate-btn").innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> Plan Route';
+        return;
+      }
+
+      // Collect valid waypoints and their time settings
+      const validWaypoints = [];
+      const waypointTimeSettings = [];
+      
+      waypointData.forEach(waypoint => {
+        // Skip null entries (removed waypoints)
+        if (!waypoint || !waypoint.locationInput.value.trim()) return;
+        
+        validWaypoints.push({
+          location: waypoint.locationInput.dataset.lat && waypoint.locationInput.dataset.lng
+            ? new google.maps.LatLng(parseFloat(waypoint.locationInput.dataset.lat), parseFloat(waypoint.locationInput.dataset.lng))
+            : waypoint.locationInput.value.trim(),
+          stopover: true
+        });
+        
+        waypointTimeSettings.push({
+          dwellHours: parseInt(waypoint.dwellHoursInput.value) || 0,
+          dwellMinutes: parseInt(waypoint.dwellMinutesInput.value) || 0,
+          departureTime: waypoint.departureTimeInput.value
+        });
+      });
+
+      const request = {
+        origin,
+        destination,
+        waypoints: validWaypoints,
+        travelMode: google.maps.TravelMode.DRIVING,
+        optimizeWaypoints: true
+      };
+
+      directionsService.route(request, (response, status) => {
+        // Reset button state
+        document.getElementById("calculate-btn").innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> Plan Route';
+        
+        if (status === "OK") {
+          directionsRenderer.setDirections(response);
+          calculateSegmentDetails(response, waypointTimeSettings);
+          showPOIsAlongRoute(response);
+          showToast("Route calculated successfully");
+        } else {
+          let message = "Route request failed";
+          if (status === "NOT_FOUND") message = "Location not found. Check your inputs";
+          else if (status === "ZERO_RESULTS") message = "No routes found between these locations";
+          setErrorMessage(message);
         }
+      });
+    }
 
-        distanceInput.addEventListener('input', calculateCost);
-        mpgInput.addEventListener('input', calculateCost);
-        fuelPriceInput.addEventListener('input', calculateCost);
-        driverPayInput.addEventListener('input', calculateCost);
-        otherCostPerMileInput.addEventListener('input', calculateCost);
-        dispatchFeePercentageInput.addEventListener('input', calculateCost);
-        resetButton.addEventListener('click', reset);
-</script>
-<html>
+    function calculateSegmentDetails(response, waypointTimeSettings) {
+      const legs = response.routes[0].legs;
+      const waypointOrder = response.routes[0].waypoint_order;
+      
+      // Reorder waypoint time settings according to the optimized waypoint order
+      const orderedTimeSettings = [];
+      waypointOrder.forEach(index => {
+        if (index < waypointTimeSettings.length) {
+          orderedTimeSettings.push(waypointTimeSettings[index]);
+        }
+      });
+      
+      // Add empty settings for the final destination
+      orderedTimeSettings.push({
+        dwellHours: 0,
+        dwellMinutes: 0,
+        departureTime: ""
+      });
+      
+      routeData = legs.map((leg, index) => ({
+        start: leg.start_address,
+        end: leg.end_address,
+        startName: leg.start_address.split(",")[0],
+        endName: leg.end_address.split(",")[0],
+        distance: leg.distance,
+        duration: leg.duration,
+        dwellHours: orderedTimeSettings[index].dwellHours,
+        dwellMinutes: orderedTimeSettings[index].dwellMinutes,
+        departureTime: orderedTimeSettings[index].departureTime
+      }));
+
+      displayTripDetails();
+    }
+
+    function showPOIsAlongRoute(response) {
+      const service = new google.maps.places.PlacesService(map);
+      const routePath = response.routes[0].overview_path;
+      const keywords = Object.keys(customIcons);
+      
+      // For mobile optimization, use fewer sample points along the route
+      const isMobile = window.innerWidth < 768;
+      const step = Math.ceil(routePath.length / (isMobile ? 20 : 40));
+
+      routePath.filter((_, i) => i % step === 0).forEach(point => {
+        keywords.forEach(keyword => {
+          const request = {
+            location: point,
+            radius: 10000,
+            keyword
+          };
+
+          setTimeout(() => {
+            service.nearbySearch(request, (results, status) => {
+              if (status === google.maps.places.PlacesServiceStatus.OK) {
+                results.forEach(place => {
+                  if (truckStopMarkers.some(m =>
+                    m.getPosition().lat() === place.geometry.location.lat() &&
+                    m.getPosition().lng() === place.geometry.location.lng())) return;
+
+                  const marker = new google.maps.Marker({
+                    map,
+                    position: place.geometry.location,
+                    title: `${place.name} (${keyword})`,
+                    icon: {
+                      url: customIcons[keyword].url,
+                      scaledSize: new google.maps.Size(24, 24)
+                    }
+                  });
+
+                  const infoWindow = new google.maps.InfoWindow({
+                    content: `
+                      <div style="padding: 8px; max-width: 200px;">
+                        <strong>${place.name}</strong>
+                        <p>${keyword}</p>
+                        <button id="add-poi-${place.id}" style="background: #3b82f6; color: white; border: none; padding: 6px 12px; border-radius: 4px; margin-top: 8px; cursor: pointer;">Add to Trip</button>
+                      </div>
+                    `
+                  });
+
+                  marker.addListener("click", () => {
+                    infoWindow.open(map, marker);
+                    
+                    // Need to wait for the DOM to be ready
+                    setTimeout(() => {
+                      const addButton = document.getElementById(`add-poi-${place.id}`);
+                      if (addButton) {
+                        addButton.addEventListener("click", () => {
+                          const location = place.geometry.location;
+                          
+                          // Find an empty waypoint or create a new one
+                          let emptyWaypoint = waypointData.find(wp => wp && !wp.locationInput.value.trim());
+                          
+                          if (emptyWaypoint) {
+                            emptyWaypoint.locationInput.value = place.name;
+                            emptyWaypoint.locationInput.dataset.lat = location.lat();
+                            emptyWaypoint.locationInput.dataset.lng = location.lng();
+                          } else {
+                            const newWaypoint = addWaypoint(place.name);
+                            newWaypoint.locationInput.dataset.lat = location.lat();
+                            newWaypoint.locationInput.dataset.lng = location.lng();
+                          }
+                          
+                          infoWindow.close();
+                          showToast(`Added ${place.name} to trip`);
+                          
+                          // Don't auto-recalculate on mobile to avoid performance issues
+                          if (!isMobile) {
+                            calculateRoute();
+                          }
+                        });
+                      }
+                    }, 100);
+                  });
+
+                  truckStopMarkers.push(marker);
+                });
+              }
+            });
+          }, Math.random() * 200); // Stagger requests to avoid rate limiting
+        });
+      });
+    }
+
+    function shareToGoogleMaps() {
+      // Check if we have calculated a route
+      if (!routeData || routeData.length === 0) {
+        setErrorMessage("Please calculate a route first before sharing");
+        return;
+      }
+      
+      const origin = document.getElementById("origin").value.trim();
+      const destination = document.getElementById("destination").value.trim();
+      
+      if (!origin || !destination) {
+        setErrorMessage("Please enter both origin and destination before sharing");
+        return;
+      }
+      
+      // Start building the Google Maps URL
+      let googleMapsUrl = "https://www.google.com/maps/dir/?api=1";
+      
+      // Add origin
+      googleMapsUrl += `&origin=${encodeURIComponent(origin)}`;
+      
+      // Add destination
+      googleMapsUrl += `&destination=${encodeURIComponent(destination)}`;
+      
+      // Add waypoints if any
+      const waypointLocations = [];
+      waypointData.forEach(waypoint => {
+        if (waypoint && waypoint.locationInput.value.trim()) {
+          waypointLocations.push(waypoint.locationInput.value.trim());
+        }
+      });
+      
+      if (waypointLocations.length > 0) {
+        // Google Maps URL has a limit on waypoints
+        const maxWaypoints = Math.min(waypointLocations.length, 10);
+        googleMapsUrl += `&waypoints=${encodeURIComponent(waypointLocations.slice(0, maxWaypoints).join('|'))}`;
+        
+        // Show warning if waypoints were truncated
+        if (waypointLocations.length > 10) {
+          setErrorMessage("Note: Google Maps limits sharing to 10 waypoints. Some waypoints may not appear in the shared route");
+        }
+      }
+      
+      // Set travel mode to driving
+      googleMapsUrl += "&travelmode=driving";
+      
+      // Show sharing dialog
+      showSharingDialog(googleMapsUrl);
+    }
+
+    function showSharingDialog(url) {
+      // Create backdrop
+      const backdrop = document.createElement("div");
+      backdrop.className = "dialog-backdrop";
+      
+      // Create dialog
+      const dialog = document.createElement("div");
+      dialog.className = "dialog";
+      
+      // Dialog header
+      const header = document.createElement("div");
+      header.className = "dialog-header";
+      
+      const title = document.createElement("h3");
+      title.className = "dialog-title";
+      title.textContent = "Share Route";
+      
+      const closeBtn = document.createElement("button");
+      closeBtn.className = "btn-icon";
+      closeBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
+      closeBtn.onclick = () => backdrop.remove();
+      
+      header.appendChild(title);
+      header.appendChild(closeBtn);
+      
+      // Dialog body
+      const body = document.createElement("div");
+      body.className = "dialog-body";
+      
+      const info = document.createElement("p");
+      info.textContent = "Open this route in Google Maps to navigate or share with others:";
+      body.appendChild(info);
+      
+      const urlDisplay = document.createElement("div");
+      urlDisplay.className = "url-display";
+      urlDisplay.textContent = url;
+      body.appendChild(urlDisplay);
+      
+      // Dialog footer
+      const footer = document.createElement("div");
+      footer.className = "dialog-footer";
+      
+      const copyBtn = document.createElement("button");
+      copyBtn.className = "btn btn-secondary";
+      copyBtn.textContent = "Copy Link";
+      copyBtn.onclick = () => {
+        navigator.clipboard.writeText(url).then(() => {
+          copyBtn.textContent = "Copied!";
+          copyBtn.classList.add("btn-success");
+          setTimeout(() => {
+            copyBtn.textContent = "Copy Link";
+            copyBtn.classList.remove("btn-success");
+          }, 2000);
+        });
+      };
+      
+      const openBtn = document.createElement("button");
+      openBtn.className = "btn btn-primary";
+      openBtn.textContent = "Open in Maps";
+      openBtn.onclick = () => {
+        window.open(url, '_blank');
+        backdrop.remove();
+      };
+      
+      footer.appendChild(copyBtn);
+      footer.appendChild(openBtn);
+      
+      // Assemble dialog
+      dialog.appendChild(header);
+      dialog.appendChild(body);
+      dialog.appendChild(footer);
+      backdrop.appendChild(dialog);
+      
+      // Add to document
+      document.body.appendChild(backdrop);
+      
+      // Close on backdrop click
+      backdrop.addEventListener("click", (e) => {
+        if (e.target === backdrop) {
+          backdrop.remove();
+        }
+      });
+    }
+  </script>
+
+  <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyASI0J9rev9-NmWnNmSV8gqG_uOOR1-19Y&libraries=places&callback=initMap">
+  </script>
+</body>
+</html>
