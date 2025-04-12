@@ -306,6 +306,7 @@
       border-radius: var(--radius);
       overflow: hidden;
       margin-bottom: var(--spacing-md);
+      position: relative;
     }
     
     #map {
@@ -442,7 +443,7 @@
       to { transform: rotate(360deg); }
     }
     
-    /* POI marker colors */
+    /* POI marker colors - Enhanced */
     .marker-legend {
       display: flex;
       flex-wrap: wrap;
@@ -461,16 +462,27 @@
     }
     
     .marker-dot {
-      width: 10px;
-      height: 10px;
+      width: 20px;
+      height: 20px;
       border-radius: 50%;
       display: inline-block;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
     }
     
-    .dot-truck-stop { background-color: #e11d48; }
-    .dot-rest-area { background-color: #2563eb; }
-    .dot-gas-station { background-color: #16a34a; }
-    .dot-truck-parking { background-color: #ca8a04; }
+    .dot-truck-stop { 
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24' stroke='white' stroke-width='1' fill='%23e11d48'%3E%3Cpath d='M19 16h-1V5a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v11H6a1 1 0 0 0 0 2h13a1 1 0 0 0 0-2zm-5-7V7h3v2h-3z'/%3E%3Ccircle cx='8' cy='17' r='2'/%3E%3Ccircle cx='16' cy='17' r='2'/%3E%3C/svg%3E");
+    }
+    .dot-rest-area { 
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24' stroke='white' stroke-width='1' fill='%232563eb'%3E%3Cpath d='M7 13c1.66 0 3-1.34 3-3S8.66 7 7 7s-3 1.34-3 3 1.34 3 3 3zm12-6h-8v7H3V5H1v15h2v-3h18v3h2v-9c0-2.21-1.79-4-4-4z'/%3E%3C/svg%3E");
+    }
+    .dot-gas-station { 
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24' stroke='white' stroke-width='1' fill='%2316a34a'%3E%3Cpath d='M19.77 7.23l.01-.01-3.72-3.72L15 4.56l2.11 2.11c-.94.36-1.61 1.26-1.61 2.33 0 1.38 1.12 2.5 2.5 2.5.36 0 .69-.08 1-.21v7.21c0 .55-.45 1-1 1s-1-.45-1-1V14c0-1.1-.9-2-2-2h-1V5c0-1.1-.9-2-2-2H6c-1.1 0-2 .9-2 2v16h10v-7.5h1.5v5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5V9c0-.69-.28-1.32-.73-1.77zM12 10H6V5h6v5zm6 0c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z'/%3E%3C/svg%3E");
+    }
+    .dot-truck-parking { 
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24' stroke='white' stroke-width='1' fill='%23ca8a04'%3E%3Cpath d='M13 3H6v18h4v-6h3c3.31 0 6-2.69 6-6s-2.69-6-6-6zm.2 8H10V7h3.2c1.1 0 2 .9 2 2s-.9 2-2 2z'/%3E%3C/svg%3E");
+    }
     
     /* Fixed bottom bar for mobile */
     .bottom-bar {
@@ -517,6 +529,214 @@
       from { opacity: 1; }
       to { opacity: 0; }
     }
+    
+    /* NEW STYLES FOR ENHANCED FEATURES */
+    
+    /* Current location button */
+    .location-input-group {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    
+    .location-input-group .form-control {
+      padding-right: 45px;
+    }
+    
+    .use-location-btn {
+      position: absolute;
+      right: 8px;
+      background: transparent;
+      border: none;
+      color: var(--primary);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .use-location-btn:hover {
+      background-color: rgba(59, 130, 246, 0.1);
+    }
+    
+    .location-active {
+      color: var(--success);
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+    
+    /* Map controls */
+    .map-controls {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 5;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    
+    .map-control-btn {
+      background: white;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s;
+    }
+    
+    .map-control-btn:hover {
+      background-color: var(--light-bg);
+    }
+    
+    .map-control-btn.active {
+      background-color: var(--primary-light);
+      color: white;
+    }
+    
+    /* Map type panel */
+    .map-type-panel {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      padding: 8px;
+      z-index: 5;
+      display: flex;
+      gap: 5px;
+    }
+    
+    .map-type-option {
+      padding: 6px 12px;
+      font-size: 0.85rem;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .map-type-option:hover {
+      background-color: var(--light-bg);
+    }
+    
+    .map-type-option.active {
+      background-color: var(--primary);
+      color: white;
+    }
+    
+    /* Location permission dialog */
+    .permission-dialog {
+      text-align: center;
+      padding: var(--spacing-md);
+    }
+    
+    .permission-dialog svg {
+      width: 60px;
+      height: 60px;
+      margin-bottom: var(--spacing-md);
+      color: var(--primary);
+    }
+    
+    .permission-dialog h3 {
+      margin-bottom: var(--spacing-sm);
+    }
+    
+    .permission-dialog p {
+      margin-bottom: var(--spacing-md);
+      color: var(--text-light);
+    }
+    
+    /* POI Filter Panel */
+    .poi-filter-panel {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      padding: 8px;
+      z-index: 5;
+    }
+    
+    .poi-filter-title {
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-bottom: 5px;
+    }
+    
+    .poi-filter-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+    
+    .poi-filter-option {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.8rem;
+      padding: 4px 8px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      user-select: none;
+    }
+    
+    .poi-filter-option:hover {
+      background-color: var(--light-bg);
+    }
+    
+    .poi-filter-option.active {
+      background-color: var(--primary-light);
+      color: white;
+    }
+    
+    .poi-filter-option .marker-dot {
+      width: 16px;
+      height: 16px;
+    }
+    
+    /* Enhanced location availability */
+    .location-status {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.8rem;
+      padding: 2px 8px;
+      border-radius: 12px;
+      background-color: var(--light-bg);
+      color: var(--text-light);
+      margin-top: 5px;
+      width: fit-content;
+    }
+    
+    .location-status.active {
+      background-color: rgba(16, 185, 129, 0.1);
+      color: var(--success);
+    }
+    
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: currentColor;
+      animation: pulse 2s infinite;
+    }
   </style>
 </head>
 <body>
@@ -534,7 +754,15 @@
           <div class="form-row">
             <div class="form-group">
               <label class="form-label" for="origin">Start Location</label>
-              <input id="origin" class="form-control" placeholder="Enter start location">
+              <div class="location-input-group">
+                <input id="origin" class="form-control" placeholder="Enter start location">
+                <button type="button" id="use-my-location" class="use-location-btn" title="Use my current location">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="1"></circle><line x1="12" y1="2" x2="12" y2="4"></line><line x1="12" y1="20" x2="12" y2="22"></line><line x1="22" y1="12" x2="20" y2="12"></line><line x1="4" y1="12" x2="2" y2="12"></line></svg>
+                </button>
+              </div>
+              <div id="location-status" class="location-status hidden">
+                <span class="pulse-dot"></span> Using your location
+              </div>
             </div>
             
             <div class="form-group">
@@ -568,314 +796,563 @@
     
     <div class="map-container">
       <div id="map"></div>
+      
+      <!-- Map Type Controls -->
+      <div class="map-type-panel">
+        <div class="map-type-option active" data-map-type="roadmap">Map</div>
+        <div class="map-type-option" data-map-type="satellite">Satellite</div>
+      </div>
+      
+      <!-- Map Controls -->
+      <button class="map-control-btn" id="zoom-in-btn" title="Zoom in">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+      </button>
+      <button class="map-control-btn" id="zoom-out-btn" title="Zoom out">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+      </button>
+      <button class="map-control-btn" id="my-location-btn" title="Center on my location">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="1"></circle><line x1="12" y1="2" x2="12" y2="4"></line><line x1="12" y1="20" x2="12" y2="22"></line><line x1="22" y1="12" x2="20" y2="12"></line><line x1="4" y1="12" x2="2" y2="12"></line></svg>
+      </button>
+      <button class="map-control-btn" id="traffic-btn" title="Show traffic">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path><circle cx="12" cy="16" r="1"></circle></svg>
+      </button>
     </div>
     
-    <div class="marker-legend">
-      <div class="marker-type">
-        <span class="marker-dot dot-truck-stop"></span>
-        Truck Stops
-      </div>
-      <div class="marker-type">
-        <span class="marker-dot dot-rest-area"></span>
-        Rest Areas
-      </div>
-      <div class="marker-type">
-        <span class="marker-dot dot-gas-station"></span>
-        Gas Stations
-      </div>
-      <div class="marker-type">
-        <span class="marker-dot dot-truck-parking"></span>
-        Truck Parking
+    <!-- POI Filter Panel -->
+    <div class="poi-filter-panel">
+      <div class="poi-filter-title">Show on map:</div>
+      <div class="poi-filter-options">
+        <div class="poi-filter-option active" data-poi-type="truck stop">
+          <span class="marker-dot dot-truck-stop"></span>
+          Truck Stops
+        </div>
+        <div class="poi-filter-option active" data-poi-type="rest area">
+          <span class="marker-dot dot-rest-area"></span>
+          Rest Areas
+        </div>
+        <div class="poi-filter-option active" data-poi-type="gas station">
+          <span class="marker-dot dot-gas-station"></span>
+          Gas Stations
+        </div>
+        <div class="poi-filter-option active" data-poi-type="truck parking">
+          <span class="marker-dot dot-truck-parking"></span>
+          Truck Parking
+        </div>
       </div>
     </div>
-    
-    <div id="trip-details" class="trip-details hidden"></div>
-    
-    <div class="page-bottom-padding"></div>
   </div>
   
-  <div class="bottom-bar">
-    <button id="calculate-btn" class="btn btn-primary">
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-      Plan Route
-    </button>
-    <button id="share-button" class="btn btn-secondary">
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
-      Share
-    </button>
-  </div>
+  <div id="trip-details" class="trip-details hidden"></div>
+  
+  <div class="page-bottom-padding"></div>
+</div>
 
-  <script>
-    let map, directionsService, directionsRenderer;
-    let waypointData = []; // Store all waypoint info (location input, dwell time, departure time)
-    let truckStopMarkers = [];
-    let routeData = [];
+<div class="bottom-bar">
+  <button id="calculate-btn" class="btn btn-primary">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+    Plan Route
+  </button>
+  <button id="share-button" class="btn btn-secondary">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+    Share
+  </button>
+</div>
 
-    const customIcons = {
-      "truck stop": {
-        url: "https://maps.google.com/mapfiles/kml/shapes/truck.png",
-        color: "#e11d48" // rose-600
-      },
-      "rest area": {
-        url: "https://maps.google.com/mapfiles/kml/shapes/info-i_maps.png",
-        color: "#2563eb" // blue-600
-      },
-      "gas station": {
-        url: "https://maps.google.com/mapfiles/kml/shapes/gas_stations.png",
-        color: "#16a34a" // green-600
-      },
-      "truck parking": {
-        url: "https://maps.google.com/mapfiles/kml/shapes/parking_lot_maps.png",
-        color: "#ca8a04" // yellow-600
+<script>
+  let map, directionsService, directionsRenderer;
+  let waypointData = []; // Store all waypoint info (location input, dwell time, departure time)
+  let truckStopMarkers = [];
+  let routeData = [];
+  let userLocationMarker = null;
+  let userCurrentPosition = null;
+  let watchPositionId = null;
+  let activePoiFilters = ["truck stop", "rest area", "gas station", "truck parking"];
+  let trafficLayer = null;
+
+  // Enhanced custom SVG icons for better differentiation
+  const customIcons = {
+    "truck stop": {
+      path: "M19 16h-1V5a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v11H6a1 1 0 0 0 0 2h13a1 1 0 0 0 0-2zm-5-7V7h3v2h-3z M8 17a2 2 0 1 0 0-4 2 2 0 0 0 0 4z M16 17a2 2 0 1 0 0-4 2 2 0 0 0 0 4z",
+      fillColor: "#e11d48", // rose-600
+      fillOpacity: 1,
+      strokeWeight: 1,
+      strokeColor: "#ffffff",
+      scale: 1.2,
+      anchor: { x: 12, y: 12 }
+    },
+    "rest area": {
+      path: "M7 13c1.66 0 3-1.34 3-3S8.66 7 7 7s-3 1.34-3 3 1.34 3 3 3zm12-6h-8v7H3V5H1v15h2v-3h18v3h2v-9c0-2.21-1.79-4-4-4z",
+      fillColor: "#2563eb", // blue-600
+      fillOpacity: 1,
+      strokeWeight: 1,
+      strokeColor: "#ffffff",
+      scale: 1.2,
+      anchor: { x: 12, y: 12 }
+    },
+    "gas station": {
+      path: "M19.77 7.23l.01-.01-3.72-3.72L15 4.56l2.11 2.11c-.94.36-1.61 1.26-1.61 2.33 0 1.38 1.12 2.5 2.5 2.5.36 0 .69-.08 1-.21v7.21c0 .55-.45 1-1 1s-1-.45-1-1V14c0-1.1-.9-2-2-2h-1V5c0-1.1-.9-2-2-2H6c-1.1 0-2 .9-2 2v16h10v-7.5h1.5v5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5V9c0-.69-.28-1.32-.73-1.77zM12 10H6V5h6v5zm6 0c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z",
+      fillColor: "#16a34a", // green-600
+      fillOpacity: 1,
+      strokeWeight: 1,
+      strokeColor: "#ffffff",
+      scale: 1.2,
+      anchor: { x: 12, y: 12 }
+    },
+    "truck parking": {
+      path: "M13 3H6v18h4v-6h3c3.31 0 6-2.69 6-6s-2.69-6-6-6zm.2 8H10V7h3.2c1.1 0 2 .9 2 2s-.9 2-2 2z",
+      fillColor: "#ca8a04", // yellow-600
+      fillOpacity: 1,
+      strokeWeight: 1,
+      strokeColor: "#ffffff",
+      scale: 1.2,
+      anchor: { x: 12, y: 12 }
+    }
+  };
+
+  function initMap() {
+    map = new google.maps.Map(document.getElementById("map"), {
+      center: { lat: 39.5, lng: -98.35 },
+      zoom: 5,
+      mapTypeControl: false,
+      fullscreenControl: false,
+      streetViewControl: false,
+      zoomControlOptions: {
+        position: google.maps.ControlPosition.RIGHT_BOTTOM
       }
+    });
+
+    directionsService = new google.maps.DirectionsService();
+    directionsRenderer = new google.maps.DirectionsRenderer({
+      map,
+      suppressMarkers: false,
+      polylineOptions: {
+        strokeColor: "#3b82f6",
+        strokeWeight: 5,
+        strokeOpacity: 0.7
+      }
+    });
+    
+    // Initialize traffic layer but don't display by default
+    trafficLayer = new google.maps.TrafficLayer();
+
+    new google.maps.places.Autocomplete(document.getElementById("origin"));
+    new google.maps.places.Autocomplete(document.getElementById("destination"));
+
+    // Set trip start time default to current time
+    const now = new Date();
+    now.setMinutes(now.getMinutes() - now.getMinutes() % 5); // Round to nearest 5 minutes
+    document.getElementById("trip-start-time").value = now.toISOString().slice(0, 16);
+
+    // Add first waypoint
+    addWaypoint();
+    
+    // Setup event listeners
+    document.getElementById("add-waypoint-btn").addEventListener("click", () => addWaypoint());
+    document.getElementById("calculate-btn").addEventListener("click", calculateRoute);
+    document.getElementById("share-button").addEventListener("click", shareToGoogleMaps);
+    
+    // Setup new map control event listeners
+    document.getElementById("zoom-in-btn").addEventListener("click", () => map.setZoom(map.getZoom() + 1));
+    document.getElementById("zoom-out-btn").addEventListener("click", () => map.setZoom(map.getZoom() - 1));
+    document.getElementById("my-location-btn").addEventListener("click", centerOnUserLocation);
+    document.getElementById("traffic-btn").addEventListener("click", toggleTraffic);
+    
+    // Setup map type switching
+    document.querySelectorAll(".map-type-option").forEach(option => {
+      option.addEventListener("click", function() {
+        document.querySelectorAll(".map-type-option").forEach(el => el.classList.remove("active"));
+        this.classList.add("active");
+        map.setMapTypeId(this.dataset.mapType);
+      });
+    });
+    
+    // Setup POI filters
+    document.querySelectorAll(".poi-filter-option").forEach(option => {
+      option.addEventListener("click", function() {
+        this.classList.toggle("active");
+        const poiType = this.dataset.poiType;
+        
+        if (this.classList.contains("active")) {
+          if (!activePoiFilters.includes(poiType)) {
+            activePoiFilters.push(poiType);
+          }
+        } else {
+          activePoiFilters = activePoiFilters.filter(type => type !== poiType);
+        }
+        
+        // Update visible markers
+        updateVisibleMarkers();
+      });
+    });
+    
+    // Setup location button
+    document.getElementById("use-my-location").addEventListener("click", useCurrentLocation);
+  }
+  
+  function toggleTraffic() {
+    const trafficBtn = document.getElementById("traffic-btn");
+    
+    if (trafficBtn.classList.contains("active")) {
+      trafficBtn.classList.remove("active");
+      trafficLayer.setMap(null);
+    } else {
+      trafficBtn.classList.add("active");
+      trafficLayer.setMap(map);
+    }
+  }
+  
+  function updateVisibleMarkers() {
+    truckStopMarkers.forEach(marker => {
+      const markerType = marker.get("poiType");
+      marker.setVisible(activePoiFilters.includes(markerType));
+    });
+  }
+  
+  function useCurrentLocation() {
+    if (navigator.geolocation) {
+      showToast("Getting your location...");
+      
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          userCurrentPosition = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          };
+          
+          // Update origin field
+          const geocoder = new google.maps.Geocoder();
+          geocoder.geocode({ location: userCurrentPosition }, (results, status) => {
+            if (status === "OK" && results[0]) {
+              document.getElementById("origin").value = results[0].formatted_address;
+              
+              // Show active location status
+              document.getElementById("location-status").classList.remove("hidden");
+              document.getElementById("use-my-location").classList.add("location-active");
+              
+              // Create or update the user location marker
+              if (!userLocationMarker) {
+                userLocationMarker = new google.maps.Marker({
+                  position: userCurrentPosition,
+                  map: map,
+                  icon: {
+                    path: google.maps.SymbolPath.CIRCLE,
+                    fillColor: "#3b82f6",
+                    fillOpacity: 1,
+                    strokeColor: "#ffffff",
+                    strokeWeight: 2,
+                    scale: 8
+                  },
+                  title: "Your Location"
+                });
+              } else {
+                userLocationMarker.setPosition(userCurrentPosition);
+              }
+              
+              // Center the map on user's location
+              map.setCenter(userCurrentPosition);
+              if (map.getZoom() < 12) map.setZoom(12);
+              
+              // Start watching position for updates
+              if (watchPositionId === null) {
+                watchPositionId = navigator.geolocation.watchPosition(
+                  (position) => {
+                    userCurrentPosition = {
+                      lat: position.coords.latitude,
+                      lng: position.coords.longitude
+                    };
+                    
+                    if (userLocationMarker) {
+                      userLocationMarker.setPosition(userCurrentPosition);
+                    }
+                  },
+                  (error) => {
+                    console.error("Error watching position:", error);
+                  },
+                  { enableHighAccuracy: true }
+                );
+              }
+            } else {
+              showToast("Could not determine address for your location");
+            }
+          });
+        },
+        (error) => {
+          if (error.code === error.PERMISSION_DENIED) {
+            showLocationPermissionDialog();
+          } else {
+            showToast("Error getting your location");
+          }
+        }
+      );
+    } else {
+      showToast("Geolocation is not supported by your browser");
+    }
+  }
+  
+  function centerOnUserLocation() {
+    if (userCurrentPosition) {
+      map.setCenter(userCurrentPosition);
+      if (map.getZoom() < 12) map.setZoom(12);
+    } else {
+      useCurrentLocation();
+    }
+  }
+  
+  function showLocationPermissionDialog() {
+    // Create dialog backdrop
+    const backdrop = document.createElement("div");
+    backdrop.className = "dialog-backdrop";
+    
+    // Create dialog
+    const dialog = document.createElement("div");
+    dialog.className = "dialog";
+    
+    // Dialog content
+    const content = document.createElement("div");
+    content.className = "permission-dialog";
+    content.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="8" x2="12" y2="12"></line>
+        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+      </svg>
+      <h3>Location Access Needed</h3>
+      <p>To use your current location, please allow location access in your browser settings.</p>
+      <button class="btn btn-primary" id="permission-ok-btn">OK, Got It</button>
+    `;
+    
+    dialog.appendChild(content);
+    backdrop.appendChild(dialog);
+    document.body.appendChild(backdrop);
+    
+    // Close dialog when OK button is clicked
+    document.getElementById("permission-ok-btn").addEventListener("click", () => {
+      backdrop.remove();
+    });
+  }
+
+  function createWaypointObject() {
+    return {
+      locationInput: null,
+      dwellHoursInput: null,
+      dwellMinutesInput: null,
+      departureTimeInput: null
     };
+  }
 
-    function initMap() {
-      map = new google.maps.Map(document.getElementById("map"), {
-        center: { lat: 39.5, lng: -98.35 },
-        zoom: 5,
-        mapTypeControl: false,
-        fullscreenControl: false,
-        streetViewControl: false,
-        zoomControlOptions: {
-          position: google.maps.ControlPosition.RIGHT_BOTTOM
-        }
-      });
+  function addWaypoint(location = "") {
+    const container = document.getElementById("waypoints");
+    const waypointIndex = waypointData.length;
+    
+    // Create waypoint card
+    const waypointCard = document.createElement("div");
+    waypointCard.className = "waypoint-card";
+    waypointCard.id = `waypoint-${waypointIndex}`;
+    
+    // Waypoint header
+    const header = document.createElement("div");
+    header.className = "waypoint-header";
+    
+    const title = document.createElement("h3");
+    title.className = "waypoint-title";
+    title.textContent = `Waypoint ${waypointIndex + 1}`;
+    
+    const removeBtn = document.createElement("button");
+    removeBtn.className = "btn-icon";
+    removeBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
+    removeBtn.onclick = (e) => {
+      e.preventDefault();
+      waypointCard.remove();
+      waypointData[waypointIndex] = null; // Mark as removed but preserve array indices
+    };
+    
+    header.appendChild(title);
+    header.appendChild(removeBtn);
+    waypointCard.appendChild(header);
+    
+    // Waypoint body
+    const body = document.createElement("div");
+    body.className = "waypoint-body";
+    
+    // Location input
+    const locationGroup = document.createElement("div");
+    locationGroup.className = "form-group";
+    
+    const locationLabel = document.createElement("label");
+    locationLabel.className = "form-label";
+    locationLabel.textContent = "Location";
+    
+    const locationInput = document.createElement("input");
+    locationInput.className = "form-control";
+    locationInput.setAttribute("placeholder", "Enter waypoint location");
+    locationInput.value = location;
+    
+    // Initialize Google Places Autocomplete
+    new google.maps.places.Autocomplete(locationInput);
+    
+    locationGroup.appendChild(locationLabel);
+    locationGroup.appendChild(locationInput);
+    body.appendChild(locationGroup);
+    
+    // Time settings
+    const timeRow = document.createElement("div");
+    timeRow.className = "time-row";
+    
+    // Dwell time group
+    const dwellGroup = document.createElement("div");
+    dwellGroup.className = "time-group";
+    
+    const dwellLabel = document.createElement("label");
+    dwellLabel.className = "form-label";
+    dwellLabel.textContent = "Dwell Time";
+    
+    const dwellInputs = document.createElement("div");
+    dwellInputs.className = "dwell-inputs";
+    
+    const hoursInput = document.createElement("input");
+    hoursInput.setAttribute("type", "number");
+    hoursInput.setAttribute("min", "0");
+    hoursInput.setAttribute("max", "99");
+    hoursInput.setAttribute("placeholder", "0");
+    hoursInput.value = "0";
+    
+    const minutesInput = document.createElement("input");
+    minutesInput.setAttribute("type", "number");
+    minutesInput.setAttribute("min", "0");
+    minutesInput.setAttribute("max", "59");
+    minutesInput.setAttribute("placeholder", "0");
+    minutesInput.value = "0";
+    
+    dwellInputs.appendChild(hoursInput);
+    dwellInputs.appendChild(document.createTextNode(" hrs "));
+    dwellInputs.appendChild(minutesInput);
+    dwellInputs.appendChild(document.createTextNode(" mins"));
+    
+    dwellGroup.appendChild(dwellLabel);
+    dwellGroup.appendChild(dwellInputs);
+    
+    // Departure time group
+    const departureGroup = document.createElement("div");
+    departureGroup.className = "time-group";
+    
+    const departureLabel = document.createElement("label");
+    departureLabel.className = "form-label";
+    departureLabel.textContent = "Departure Time";
+    
+    const departureInput = document.createElement("input");
+    departureInput.setAttribute("type", "datetime-local");
+    departureInput.className = "form-control";
+    
+    departureGroup.appendChild(departureLabel);
+    departureGroup.appendChild(departureInput);
+    
+    // Add time groups to time row
+    timeRow.appendChild(dwellGroup);
+    timeRow.appendChild(departureGroup);
+    
+    // Initially hidden, with toggle
+    const timeSettings = document.createElement("div");
+    timeSettings.className = "time-settings hidden";
+    timeSettings.appendChild(timeRow);
+    
+    const toggleBtn = document.createElement("button");
+    toggleBtn.textContent = "Show time settings";
+    toggleBtn.className = "collapse-btn";
+    toggleBtn.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      Time settings
+    `;
+    toggleBtn.onclick = (e) => {
+      e.preventDefault();
+      timeSettings.classList.toggle("hidden");
+      toggleBtn.innerHTML = timeSettings.classList.contains("hidden") 
+        ? `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg> Time settings`
+        : `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg> Hide time settings`;
+    };
+    
+    body.appendChild(toggleBtn);
+    body.appendChild(timeSettings);
+    waypointCard.appendChild(body);
+    
+    // Add to container
+    container.appendChild(waypointCard);
+    
+    // Store references to inputs
+    const waypointObj = createWaypointObject();
+    waypointObj.locationInput = locationInput;
+    waypointObj.dwellHoursInput = hoursInput;
+    waypointObj.dwellMinutesInput = minutesInput;
+    waypointObj.departureTimeInput = departureInput;
+    
+    waypointData.push(waypointObj);
+    
+    return waypointObj;
+  }
 
-      directionsService = new google.maps.DirectionsService();
-      directionsRenderer = new google.maps.DirectionsRenderer({
-        map,
-        suppressMarkers: false,
-        polylineOptions: {
-          strokeColor: "#3b82f6",
-          strokeWeight: 5,
-          strokeOpacity: 0.7
-        }
-      });
+  function clearTruckStopMarkers() {
+    truckStopMarkers.forEach(marker => marker.setMap(null));
+    truckStopMarkers = [];
+  }
 
-      new google.maps.places.Autocomplete(document.getElementById("origin"));
-      new google.maps.places.Autocomplete(document.getElementById("destination"));
-
-      // Set trip start time default to current time
-      const now = new Date();
-      now.setMinutes(now.getMinutes() - now.getMinutes() % 5); // Round to nearest 5 minutes
-      document.getElementById("trip-start-time").value = now.toISOString().slice(0, 16);
-
-      // Add first waypoint
-      addWaypoint();
-      
-      // Setup event listeners
-      document.getElementById("add-waypoint-btn").addEventListener("click", () => addWaypoint());
-      document.getElementById("calculate-btn").addEventListener("click", calculateRoute);
-      document.getElementById("share-button").addEventListener("click", shareToGoogleMaps);
-    }
-
-    function createWaypointObject() {
-      return {
-        locationInput: null,
-        dwellHoursInput: null,
-        dwellMinutesInput: null,
-        departureTimeInput: null
-      };
-    }
-
-    function addWaypoint(location = "") {
-      const container = document.getElementById("waypoints");
-      const waypointIndex = waypointData.length;
-      
-      // Create waypoint card
-      const waypointCard = document.createElement("div");
-      waypointCard.className = "waypoint-card";
-      waypointCard.id = `waypoint-${waypointIndex}`;
-      
-      // Waypoint header
-      const header = document.createElement("div");
-      header.className = "waypoint-header";
-      
-      const title = document.createElement("h3");
-      title.className = "waypoint-title";
-      title.textContent = `Waypoint ${waypointIndex + 1}`;
-      
-      const removeBtn = document.createElement("button");
-      removeBtn.className = "btn-icon";
-      removeBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
-      removeBtn.onclick = (e) => {
-        e.preventDefault();
-        waypointCard.remove();
-        waypointData[waypointIndex] = null; // Mark as removed but preserve array indices
-      };
-      
-      header.appendChild(title);
-      header.appendChild(removeBtn);
-      waypointCard.appendChild(header);
-      
-      // Waypoint body
-      const body = document.createElement("div");
-      body.className = "waypoint-body";
-      
-      // Location input
-      const locationGroup = document.createElement("div");
-      locationGroup.className = "form-group";
-      
-      const locationLabel = document.createElement("label");
-      locationLabel.className = "form-label";
-      locationLabel.textContent = "Location";
-      
-      const locationInput = document.createElement("input");
-      locationInput.className = "form-control";
-      locationInput.setAttribute("placeholder", "Enter waypoint location");
-      locationInput.value = location;
-      
-      // Initialize Google Places Autocomplete
-      new google.maps.places.Autocomplete(locationInput);
-      
-      locationGroup.appendChild(locationLabel);
-      locationGroup.appendChild(locationInput);
-      body.appendChild(locationGroup);
-      
-      // Time settings
-      const timeRow = document.createElement("div");
-      timeRow.className = "time-row";
-      
-      // Dwell time group
-      const dwellGroup = document.createElement("div");
-      dwellGroup.className = "time-group";
-      
-      const dwellLabel = document.createElement("label");
-      dwellLabel.className = "form-label";
-      dwellLabel.textContent = "Dwell Time";
-      
-      const dwellInputs = document.createElement("div");
-      dwellInputs.className = "dwell-inputs";
-      
-      const hoursInput = document.createElement("input");
-      hoursInput.setAttribute("type", "number");
-      hoursInput.setAttribute("min", "0");
-      hoursInput.setAttribute("max", "99");
-      hoursInput.setAttribute("placeholder", "0");
-      hoursInput.value = "0";
-      
-      const minutesInput = document.createElement("input");
-      minutesInput.setAttribute("type", "number");
-      minutesInput.setAttribute("min", "0");
-      minutesInput.setAttribute("max", "59");
-      minutesInput.setAttribute("placeholder", "0");
-      minutesInput.value = "0";
-      
-      dwellInputs.appendChild(hoursInput);
-      dwellInputs.appendChild(document.createTextNode(" hrs "));
-      dwellInputs.appendChild(minutesInput);
-      dwellInputs.appendChild(document.createTextNode(" mins"));
-      
-      dwellGroup.appendChild(dwellLabel);
-      dwellGroup.appendChild(dwellInputs);
-      
-      // Departure time group
-      const departureGroup = document.createElement("div");
-      departureGroup.className = "time-group";
-      
-      const departureLabel = document.createElement("label");
-      departureLabel.className = "form-label";
-      departureLabel.textContent = "Departure Time";
-      
-      const departureInput = document.createElement("input");
-      departureInput.setAttribute("type", "datetime-local");
-      departureInput.className = "form-control";
-      
-      departureGroup.appendChild(departureLabel);
-      departureGroup.appendChild(departureInput);
-      
-      // Add time groups to time row
-      timeRow.appendChild(dwellGroup);
-      timeRow.appendChild(departureGroup);
-      
-      // Initially hidden, with toggle
-      const timeSettings = document.createElement("div");
-      timeSettings.className = "time-settings hidden";
-      timeSettings.appendChild(timeRow);
-      
-      const toggleBtn = document.createElement("button");
-      toggleBtn.textContent = "Show time settings";
-      toggleBtn.className = "collapse-btn";
-      toggleBtn.innerHTML = `
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-        Time settings
-      `;
-      toggleBtn.onclick = (e) => {
-        e.preventDefault();
-        timeSettings.classList.toggle("hidden");
-        toggleBtn.innerHTML = timeSettings.classList.contains("hidden") 
-          ? `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg> Time settings`
-          : `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg> Hide time settings`;
-      };
-      
-      body.appendChild(toggleBtn);
-      body.appendChild(timeSettings);
-      waypointCard.appendChild(body);
-      
-      // Add to container
-      container.appendChild(waypointCard);
-      
-      // Store references to inputs
-      const waypointObj = createWaypointObject();
-      waypointObj.locationInput = locationInput;
-      waypointObj.dwellHoursInput = hoursInput;
-      waypointObj.dwellMinutesInput = minutesInput;
-      waypointObj.departureTimeInput = departureInput;
-      
-      waypointData.push(waypointObj);
-      
-      return waypointObj;
-    }
-
-    function clearTruckStopMarkers() {
-      truckStopMarkers.forEach(marker => marker.setMap(null));
-      truckStopMarkers = [];
-    }
-
-    function setErrorMessage(message) {
-      const errorElement = document.getElementById("error-message");
-      errorElement.textContent = message;
-      
-      if (message) {
-        errorElement.classList.remove("hidden");
-        // Auto-hide after 5 seconds
-        setTimeout(() => {
-          errorElement.classList.add("hidden");
-        }, 5000);
-      } else {
+  function setErrorMessage(message) {
+    const errorElement = document.getElementById("error-message");
+    errorElement.textContent = message;
+    
+    if (message) {
+      errorElement.classList.remove("hidden");
+      // Auto-hide after 5 seconds
+      setTimeout(() => {
         errorElement.classList.add("hidden");
-      }
+      }, 5000);
+    } else {
+      errorElement.classList.add("hidden");
+    }
+  }
+  
+  function showToast(message) {
+    // Remove any existing toast
+    const existingToast = document.querySelector(".toast");
+    if (existingToast) {
+      existingToast.remove();
     }
     
-    function showToast(message) {
-      // Remove any existing toast
-      const existingToast = document.querySelector(".toast");
-      if (existingToast) {
-        existingToast.remove();
-      }
-      
-      const toast = document.createElement("div");
-      toast.className = "toast";
-      toast.textContent = message;
-      document.body.appendChild(toast);
-      
-      // Auto-remove after animation completes
-      setTimeout(() => {
-        toast.remove();
-      }, 3000);
-    }
+    const toast = document.createElement("div");
+    toast.className = "toast";
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    
+    // Auto-remove after animation completes
+    setTimeout(() => {
+      toast.remove();
+    }, 3000);
+  }
 
-    function formatTime(date) {
-      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    }
+  function formatTime(date) {
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  }
 
-    function formatDate(date) {
-      return date.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
-    }
+  function formatDate(date) {
+    return date.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
+  }
 
-    function formatDateTime(date) {
-      return `${formatDate(date)} at ${formatTime(date)}`;
+  function formatDateTime(date) {
+    return `${formatDate(date)} at ${formatTime(date)}`;
+  }
+    function formatDrivingTime(seconds) {
+        const hours = Math.floor(seconds / 3600);
+        const minutes = Math.floor((seconds % 3600) / 60);
+        
+        if (hours > 0) {
+        return `${hours} hr ${minutes} min`;
+        } else {
+        return `${minutes} min`;
+        }
+    }
+    // Helper function to format time as hours and minutes
+    function formatHoursMinutes(seconds) {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    return `${hours}h ${minutes}m`;
     }
 
     function displayTripDetails() {
@@ -935,7 +1412,9 @@
         segmentDiv.appendChild(routeInfo);
         
         const distanceDuration = document.createElement("p");
-        distanceDuration.textContent = `${distance.text} • ${duration.text}`;
+        // Format duration in hours and minutes
+        const formattedDuration = formatHoursMinutes(duration.value);
+        distanceDuration.textContent = `${distance.text} • ${formattedDuration}`;
         segmentDiv.appendChild(distanceDuration);
         
         const eta = document.createElement("p");
@@ -974,11 +1453,12 @@
           if (departDate > currentTime) {
             // Calculate waiting time (additional dwell)
             const additionalWaitMs = departDate - currentTime;
-            const additionalWaitHours = additionalWaitMs / (1000 * 60 * 60);
+            const additionalWaitHours = Math.floor(additionalWaitMs / (1000 * 60 * 60));
+            const additionalWaitMinutes = Math.floor((additionalWaitMs % (1000 * 60 * 60)) / (1000 * 60));
             
-            if (additionalWaitHours > 0) {
+            if (additionalWaitHours > 0 || additionalWaitMinutes > 0) {
               const additionalWait = document.createElement("p");
-              additionalWait.textContent = `Additional wait: ${additionalWaitHours.toFixed(1)}h`;
+              additionalWait.textContent = `Additional wait: ${additionalWaitHours}h ${additionalWaitMinutes}m`;
               segmentDiv.appendChild(additionalWait);
               
               // Add to total dwell time
@@ -997,23 +1477,25 @@
       });
 
       const totalMiles = (totalDistance / 1000) * 0.621371;
-      const totalDrivingHours = totalDrivingDuration / 3600;
-      const totalDwellHours = totalDwellDuration / 3600;
-      const totalTripHours = totalDrivingHours + totalDwellHours;
-
+      
+      // Format driving time in hours and minutes
+      const formattedDrivingTime = formatHoursMinutes(totalDrivingDuration);
+      const formattedDwellTime = formatHoursMinutes(totalDwellDuration);
+      const formattedTotalTime = formatHoursMinutes(totalDrivingDuration + totalDwellDuration);
+      
       const finalEta = formatDateTime(currentTime);
 
-      // Create summary box
+      // Create summary box with properly formatted time values
       const summaryBox = document.createElement("div");
       summaryBox.className = "summary-box";
       
       summaryBox.innerHTML = `
         <h3>Total Trip</h3>
         <p><strong>Distance:</strong> ${totalMiles.toFixed(1)} miles</p>
-        <p><strong>Driving time:</strong> ${totalDrivingHours.toFixed(1)} hours</p>
-        <p><strong>Stop/wait time:</strong> ${totalDwellHours.toFixed(1)} hours</p>
-        <p><strong>Total trip duration:</strong> ${totalTripHours.toFixed(1)} hours</p>
-        <p class="eta-time">Final arrival: ${finalEta}</p>
+        <p><strong>Driving time:</strong> ${formattedDrivingTime}</p>
+        <p><strong>Stop/wait time:</strong> ${formattedDwellTime}</p>
+        <p><strong>Total trip duration:</strong> ${formattedTotalTime}</p>
+        <p class="eta-time"><strong>Final arrival:</strong> ${finalEta}</p>
       `;
       
       tripDetailsDiv.appendChild(summaryBox);
@@ -1124,14 +1606,13 @@
     function showPOIsAlongRoute(response) {
       const service = new google.maps.places.PlacesService(map);
       const routePath = response.routes[0].overview_path;
-      const keywords = Object.keys(customIcons);
       
       // For mobile optimization, use fewer sample points along the route
       const isMobile = window.innerWidth < 768;
       const step = Math.ceil(routePath.length / (isMobile ? 20 : 40));
 
       routePath.filter((_, i) => i % step === 0).forEach(point => {
-        keywords.forEach(keyword => {
+        activePoiFilters.forEach(keyword => {
           const request = {
             location: point,
             radius: 10000,
@@ -1150,11 +1631,12 @@
                     map,
                     position: place.geometry.location,
                     title: `${place.name} (${keyword})`,
-                    icon: {
-                      url: customIcons[keyword].url,
-                      scaledSize: new google.maps.Size(24, 24)
-                    }
+                    icon: customIcons[keyword],
+                    visible: activePoiFilters.includes(keyword)
                   });
+                  
+                  // Store the POI type with the marker for filtering
+                  marker.set("poiType", keyword);
 
                   const infoWindow = new google.maps.InfoWindow({
                     content: `
@@ -1350,3 +1832,4 @@
   </script>
 </body>
 </html>
+           
