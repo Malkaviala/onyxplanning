@@ -793,6 +793,12 @@
             <label class="form-label" for="trip-rate">Rate ($)</label>
             <input type="number" id="trip-rate" class="form-control" step="0.01" min="0" placeholder="Enter rate per mile">
           </div>
+            <div class="form-group">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <input type="checkbox" id="optimize-route" checked>
+                <label for="optimize-route" style="margin-bottom: 0;">Optimize waypoint order for efficiency</label>
+            </div>
+            </div>
         </form>
       </div>
     </div>
@@ -1525,103 +1531,114 @@
     }
 
     function calculateRoute() {
-      // Show loading state
-      document.getElementById("calculate-btn").innerHTML = '<span class="loading"></span> Planning...';
-      
-      clearTruckStopMarkers();
-      setErrorMessage("");
-      routeData = [];
+  // Show loading state
+  document.getElementById("calculate-btn").innerHTML = '<span class="loading"></span> Planning...';
+  
+  clearTruckStopMarkers();
+  setErrorMessage("");
+  routeData = [];
 
-      const origin = document.getElementById("origin").value.trim();
-      const destination = document.getElementById("destination").value.trim();
+  const origin = document.getElementById("origin").value.trim();
+  const destination = document.getElementById("destination").value.trim();
 
-      if (!origin || !destination) {
-        setErrorMessage("Please enter both origin and destination");
-        document.getElementById("calculate-btn").innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> Plan Route';
-        return;
+  if (!origin || !destination) {
+    setErrorMessage("Please enter both origin and destination");
+    document.getElementById("calculate-btn").innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> Plan Route';
+    return;
+  }
+
+  // Collect valid waypoints and their time settings
+  const validWaypoints = [];
+  const waypointTimeSettings = [];
+  
+  waypointData.forEach(waypoint => {
+    // Skip null entries (removed waypoints)
+    if (!waypoint || !waypoint.locationInput.value.trim()) return;
+    
+    validWaypoints.push({
+      location: waypoint.locationInput.dataset.lat && waypoint.locationInput.dataset.lng
+        ? new google.maps.LatLng(parseFloat(waypoint.locationInput.dataset.lat), parseFloat(waypoint.locationInput.dataset.lng))
+        : waypoint.locationInput.value.trim(),
+      stopover: true
+    });
+    
+    waypointTimeSettings.push({
+      dwellHours: parseInt(waypoint.dwellHoursInput.value) || 0,
+      dwellMinutes: parseInt(waypoint.dwellMinutesInput.value) || 0,
+      departureTime: waypoint.departureTimeInput.value
+    });
+  });
+
+  // Check if optimization is enabled
+  const optimizeWaypoints = document.getElementById("optimize-route").checked;
+
+  const request = {
+    origin,
+    destination,
+    waypoints: validWaypoints,
+    travelMode: google.maps.TravelMode.DRIVING,
+    optimizeWaypoints: optimizeWaypoints // Use the checkbox value
+  };
+
+  directionsService.route(request, (response, status) => {
+    // Reset button state
+    document.getElementById("calculate-btn").innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> Plan Route';
+    
+    if (status === "OK") {
+      directionsRenderer.setDirections(response);
+      calculateSegmentDetails(response, waypointTimeSettings, optimizeWaypoints);
+      showPOIsAlongRoute(response);
+      showToast("Route calculated successfully");
+    } else {
+      let message = "Route request failed";
+      if (status === "NOT_FOUND") message = "Location not found. Check your inputs";
+      else if (status === "ZERO_RESULTS") message = "No routes found between these locations";
+      setErrorMessage(message);
+    }
+  });
+}
+
+function calculateSegmentDetails(response, waypointTimeSettings, wasOptimized) {
+  const legs = response.routes[0].legs;
+  const waypointOrder = response.routes[0].waypoint_order;
+  
+  // If route wasn't optimized, we can use the original order for settings
+  let orderedTimeSettings;
+  
+  if (wasOptimized) {
+    // Reorder waypoint time settings according to the optimized waypoint order
+    orderedTimeSettings = [];
+    waypointOrder.forEach(index => {
+      if (index < waypointTimeSettings.length) {
+        orderedTimeSettings.push(waypointTimeSettings[index]);
       }
+    });
+  } else {
+    // Use the original order
+    orderedTimeSettings = [...waypointTimeSettings];
+  }
+  
+  // Add empty settings for the final destination
+  orderedTimeSettings.push({
+    dwellHours: 0,
+    dwellMinutes: 0,
+    departureTime: ""
+  });
+  
+  routeData = legs.map((leg, index) => ({
+    start: leg.start_address,
+    end: leg.end_address,
+    startName: leg.start_address.split(",")[0],
+    endName: leg.end_address.split(",")[0],
+    distance: leg.distance,
+    duration: leg.duration,
+    dwellHours: orderedTimeSettings[index].dwellHours,
+    dwellMinutes: orderedTimeSettings[index].dwellMinutes,
+    departureTime: orderedTimeSettings[index].departureTime
+  }));
 
-      // Collect valid waypoints and their time settings
-      const validWaypoints = [];
-      const waypointTimeSettings = [];
-      
-      waypointData.forEach(waypoint => {
-        // Skip null entries (removed waypoints)
-        if (!waypoint || !waypoint.locationInput.value.trim()) return;
-        
-        validWaypoints.push({
-          location: waypoint.locationInput.dataset.lat && waypoint.locationInput.dataset.lng
-            ? new google.maps.LatLng(parseFloat(waypoint.locationInput.dataset.lat), parseFloat(waypoint.locationInput.dataset.lng))
-            : waypoint.locationInput.value.trim(),
-          stopover: true
-        });
-        
-        waypointTimeSettings.push({
-          dwellHours: parseInt(waypoint.dwellHoursInput.value) || 0,
-          dwellMinutes: parseInt(waypoint.dwellMinutesInput.value) || 0,
-          departureTime: waypoint.departureTimeInput.value
-        });
-      });
-
-      const request = {
-        origin,
-        destination,
-        waypoints: validWaypoints,
-        travelMode: google.maps.TravelMode.DRIVING,
-        optimizeWaypoints: true
-      };
-
-      directionsService.route(request, (response, status) => {
-        // Reset button state
-        document.getElementById("calculate-btn").innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> Plan Route';
-        
-        if (status === "OK") {
-          directionsRenderer.setDirections(response);
-          calculateSegmentDetails(response, waypointTimeSettings);
-          showPOIsAlongRoute(response);
-          showToast("Route calculated successfully");
-        } else {
-          let message = "Route request failed";
-          if (status === "NOT_FOUND") message = "Location not found. Check your inputs";
-          else if (status === "ZERO_RESULTS") message = "No routes found between these locations";
-          setErrorMessage(message);
-        }
-      });
-    }
-
-    function calculateSegmentDetails(response, waypointTimeSettings) {
-      const legs = response.routes[0].legs;
-      const waypointOrder = response.routes[0].waypoint_order;
-      
-      // Reorder waypoint time settings according to the optimized waypoint order
-      const orderedTimeSettings = [];
-      waypointOrder.forEach(index => {
-        if (index < waypointTimeSettings.length) {
-          orderedTimeSettings.push(waypointTimeSettings[index]);
-        }
-      });
-      
-      // Add empty settings for the final destination
-      orderedTimeSettings.push({
-        dwellHours: 0,
-        dwellMinutes: 0,
-        departureTime: ""
-      });
-      
-      routeData = legs.map((leg, index) => ({
-        start: leg.start_address,
-        end: leg.end_address,
-        startName: leg.start_address.split(",")[0],
-        endName: leg.end_address.split(",")[0],
-        distance: leg.distance,
-        duration: leg.duration,
-        dwellHours: orderedTimeSettings[index].dwellHours,
-        dwellMinutes: orderedTimeSettings[index].dwellMinutes,
-        departureTime: orderedTimeSettings[index].departureTime
-      }));
-
-      displayTripDetails();
-    }
+  displayTripDetails();
+}
 
     function showPOIsAlongRoute(response) {
       const service = new google.maps.places.PlacesService(map);
