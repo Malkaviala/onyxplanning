@@ -737,6 +737,20 @@
       background-color: currentColor;
       animation: pulse 2s infinite;
     }
+    .cost-summary-box {
+    background-color: var(--light-bg);
+    border-radius: var(--radius);
+    padding: var(--spacing-md);
+    margin-top: var(--spacing-md);
+    }
+
+    .balance.positive {
+    color: var(--success);
+    }
+
+    .balance.negative {
+    color: var(--danger);
+    }
   </style>
 </head>
 <body>
@@ -774,6 +788,10 @@
           <div class="form-group">
             <label class="form-label" for="trip-start-time">Trip Start Time</label>
             <input type="datetime-local" id="trip-start-time" class="form-control">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="trip-rate">Rate ($)</label>
+            <input type="number" id="trip-rate" class="form-control" step="0.01" min="0" placeholder="Enter rate per mile">
           </div>
         </form>
       </div>
@@ -1502,6 +1520,8 @@
       
       // Scroll to trip details
       tripDetailsDiv.scrollIntoView({ behavior: 'smooth' });
+      calculateTripCosts();
+
     }
 
     function calculateRoute() {
@@ -1825,6 +1845,44 @@
         }
       });
     }
+    // Add this function to calculate and display trip costs
+function calculateTripCosts() {
+  // Get the distance from route data
+  const totalMiles = routeData.reduce((total, segment) => {
+    return total + segment.distance.value;
+  }, 0) / 1000 * 0.621371; // Convert meters to miles
+  
+  // Use the parameters provided
+  const rate = parseFloat(document.getElementById('trip-rate').value) || 0;
+  const mpg = 6; // Miles per gallon
+  const fuelPrice = 4; // Dollars per gallon
+  const driverPayRate = 0.7; // Dollars per mile
+  const otherCostRate = 0.5; // Dollars per mile
+  
+  // Calculate costs
+  const totalDriverPay = totalMiles * driverPayRate;
+  const totalFuelCost = (totalMiles / mpg) * fuelPrice;
+  const totalOtherCost = totalMiles * otherCostRate;
+  const balance = rate - (totalDriverPay + totalFuelCost + totalOtherCost); // Corrected this line
+  
+  // Display the results
+  const costsHtml = `
+    <div class="cost-summary-box">
+      <h3>Trip Costs</h3>
+      <p><strong>Total Distance:</strong> ${totalMiles.toFixed(1)} miles</p>
+      <p><strong>Rate:</strong> $${rate.toFixed(2)}</p>
+      <p><strong>Total Driver Pay:</strong> $${totalDriverPay.toFixed(2)}</p>
+      <p><strong>Total Fuel Cost:</strong> $${totalFuelCost.toFixed(2)}</p>
+      <p><strong>Total Other Costs:</strong> $${totalOtherCost.toFixed(2)}</p>
+      <p class="balance ${balance >= 0 ? 'positive' : 'negative'}">
+        <strong>Balance:</strong> $${balance.toFixed(2)}
+      </p>
+    </div>
+  `;
+  
+  // Append costs to trip details
+  document.getElementById('trip-details').insertAdjacentHTML('beforeend', costsHtml);
+}
   </script>
 
   <script async defer
